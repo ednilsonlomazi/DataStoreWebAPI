@@ -10,7 +10,8 @@ namespace CommonWebAPI.Persistence
             
         }
         //DbSet funcionando ai como uma tabela (armazenando registros do tipo CommonEntity)
-        public DbSet<TabNode> commonEntities { get; set; }
+        public DbSet<TabNode> tabNode { get; set; }
+        public DbSet<TabUser> tabUser { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

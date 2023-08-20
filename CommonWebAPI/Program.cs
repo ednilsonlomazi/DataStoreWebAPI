@@ -7,7 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 //// Singleton funciona como se fosse um banco de dados inteiramente na memoria
 //builder.Services.AddSingleton<CommonDBContext>();
 
-builder.Services.AddDbContext<DbNodeHunterContext>(s => s.UseInMemoryDatabase("DbNodeHunter"));
+// ------------------ Configuracao para banco apenas na memoria ---------
+// para usar o banco em memoria, descomente essa linha
+//builder.Services.AddDbContext<DbNodeHunterContext>(s => s.UseInMemoryDatabase("DbNodeHunter"));
+// ----------------------------------------------------------------------
+
+// ------------------ Configuracao de Acesso ao SQL Server ---------------
+// coletando a string de conexao
+var connectionString = builder.Configuration.GetConnectionString("NodeHunter");
+builder.Services.AddDbContext<DbNodeHunterContext>(s => s.UseSqlServer(connectionString));
+// -------------------------------------------------------------------------
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
