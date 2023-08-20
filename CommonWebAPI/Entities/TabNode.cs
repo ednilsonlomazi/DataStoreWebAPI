@@ -1,31 +1,34 @@
 ﻿namespace CommonWebAPI.Entities
 {
-    public class CommonEntity
+    public class TabNode
     {
-        public CommonEntity()
+        public TabNode()
         {
-            Speakers = new List<CommonEntitySpeaker> { };
-            IsUp = false;
+            this.Users = new List<TabUser> { };
+            this.IsUp = false;
+            this.IsDeleted = false;
         }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string IpAddress { get; set; }
         public string MacAddress { get; set; }
         public bool IsUp { get; set; }
-        public List<CommonEntitySpeaker> Speakers { get; set; }
+        public bool IsDeleted { get; set; }
+        public List<TabUser> Users { get; set; }
     
-        public void Update(string Name, string IpAddress, string MacAddress, bool IsUp)
+        public void Update(string Name, string IpAddress, string MacAddress, bool IsUp, bool IsDeleted)
         {
             this.Name = Name;
             this.IpAddress = IpAddress;
             this.MacAddress = MacAddress;
             this.IsUp = IsUp;
+            this.IsDeleted = IsDeleted;
 
         }
 
         public void Delete()
         {
-            this.IsUp = false;
+            this.IsDeleted = true;
         }
     }
 }
