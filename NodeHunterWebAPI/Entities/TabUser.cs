@@ -1,4 +1,4 @@
-﻿namespace CommonWebAPI.Entities
+﻿namespace NodeHunterWebAPI.Entities
 {
     public class TabUser
     {

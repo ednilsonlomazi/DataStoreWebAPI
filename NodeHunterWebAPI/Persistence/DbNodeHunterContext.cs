@@ -1,7 +1,7 @@
-﻿using CommonWebAPI.Entities;
+﻿using NodeHunterWebAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CommonWebAPI.Persistence
+namespace NodeHunterWebAPI.Persistence
 {
     public class DbNodeHunterContext : DbContext
     {

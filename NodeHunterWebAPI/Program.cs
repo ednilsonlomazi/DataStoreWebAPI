@@ -1,4 +1,4 @@
-using CommonWebAPI.Persistence;
+using NodeHunterWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

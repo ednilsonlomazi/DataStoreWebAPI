@@ -1,10 +1,10 @@
-﻿using CommonWebAPI.Entities;
-using CommonWebAPI.Persistence;
+﻿using NodeHunterWebAPI.Entities;
+using NodeHunterWebAPI.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace CommonWebAPI.Controllers
+namespace NodeHunterWebAPI.Controllers
 {
 
     [Route("api/common-web-api")]
