@@ -62,7 +62,7 @@ namespace NodeHunterWebAPI.Controllers
             tab_node.Update(tabNodeInput.Name, tabNodeInput.IpAddress, tabNodeInput.MacAddress, tabNodeInput.IsUp, tab_node.IsDeleted);
 
             //update logico
-            this._dbContext.Update(tabNodeInput);
+            this._dbContext.tabNode.Update(tab_node);
 
             //update fisicio
             this._dbContext.SaveChanges();

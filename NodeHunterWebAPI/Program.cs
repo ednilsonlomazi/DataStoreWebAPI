@@ -16,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 // coletando a string de conexao
 var connectionString = builder.Configuration.GetConnectionString("NodeHunter");
 builder.Services.AddDbContext<DbNodeHunterContext>(s => s.UseSqlServer(connectionString));
+
 // -------------------------------------------------------------------------
 
 
