@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,7 +14,8 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                 name: "tabNode",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "varchar(256)", nullable: false),
                     ip_address = table.Column<string>(type: "char(15)", nullable: false),
                     mac_address = table.Column<string>(type: "char(17)", nullable: false),
@@ -31,8 +31,9 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                 name: "tabUser",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NodeId = table.Column<int>(type: "int", nullable: false),
                     name = table.Column<string>(type: "varchar(256)", nullable: false),
                     password = table.Column<string>(type: "varchar(256)", nullable: false)
                 },
@@ -40,12 +41,17 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_tabUser", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_tabUser_tabNode_Id",
-                        column: x => x.Id,
+                        name: "FK_tabUser_tabNode_NodeId",
+                        column: x => x.NodeId,
                         principalTable: "tabNode",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tabUser_NodeId",
+                table: "tabUser",
+                column: "NodeId");
         }
 
         /// <inheritdoc />

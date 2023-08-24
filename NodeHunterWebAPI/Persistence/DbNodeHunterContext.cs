@@ -23,7 +23,7 @@ namespace NodeHunterWebAPI.Persistence
 
                 //definindo uma foreign key da tabela de usuarios
                 e.HasMany(u => u.Users).WithOne()
-                                       .HasForeignKey(u => u.Id);
+                                       .HasForeignKey(u => u.NodeId);
 
                 //definindo not null
                 e.Property(ce => ce.Name).IsRequired(true)

@@ -31,7 +31,7 @@ namespace NodeHunterWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetByID(Guid id)
+        public IActionResult GetByID(int id)
         {
             var tab_node = this._dbContext.tabNode.Include(u => u.Users).SingleOrDefault(d => d.Id == id);
 
@@ -53,7 +53,7 @@ namespace NodeHunterWebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, TabNode tabNodeInput)
+        public IActionResult Update(int id, TabNode tabNodeInput)
         {
             var tab_node = this._dbContext.tabNode.SingleOrDefault(d => d.Id == id);
 
@@ -71,7 +71,7 @@ namespace NodeHunterWebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete(int id)
         {
             var commonEntity = this._dbContext.tabNode.SingleOrDefault(d => d.Id == id);
 
@@ -86,7 +86,7 @@ namespace NodeHunterWebAPI.Controllers
 
         // recebe id do node para adicionar um usuario
         [HttpPost("{id}/users")]
-        public IActionResult PostUser(Guid id, TabUser tabUserInput)
+        public IActionResult PostUser(int id, TabUser tabUserInput)
         {
             tabUserInput.NodeId = id;
 
