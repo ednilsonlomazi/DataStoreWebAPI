@@ -12,7 +12,7 @@ namespace NodeHunterWebAPI.Persistence
         //DbSet funcionando ai como uma tabela (armazenando registros do tipo CommonEntity)
         public DbSet<TabDocumento> tabDocumento { get; set; }
         public DbSet<TabItemDocumento> tabItemDocumento { get; set; }
-//        public DbSet<TabUsuario> tabUsuario { get; set; }
+        public DbSet<TabUsuario> tabUsuario { get; set; }
         public DbSet<TabCliente> tabCliente { get; set; }
         public DbSet<TabEmissor> tabEmissors { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
@@ -20,39 +20,58 @@ namespace NodeHunterWebAPI.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //definindo as constraints, propriedades, tipos da tab_node
+             
             modelBuilder.Entity<TabDocumento>(e => {
 
-                //definindo primary key
-                e.HasKey(td => td.codigoDocumento);
-
-                //estou definindo uma FK na tab_item_documento que referencia o codigo do documento
-                e.HasMany(td => td.tabItemDocumentos).WithOne()
-                                       .HasForeignKey(tid => tid.codigoDocumento);
-
+                e.HasKey(td => td.codigoDocumento); // definindo primary key composta
+                e.HasOne(tid => tid.tabItemDocumento)
+                 .WithOne(td => td.tabDocumento)
+                 .HasForeignKey<TabItemDocumento>(); // a foreign key é a primary key da child tab quando (vazio)
             });
-
-
 
             modelBuilder.Entity<TabItemDocumento>(e => {
 
-                //definindo chave primaria composta
-                e.HasKey(tid => new {tid.codigoDocumento, tid.codigoItemDocumento});
+                e.HasKey(tid => tid.codigoItemDocumento); // definindo primary key composta
 
             });
 
+            // -- -- -- -- -- -- -- -- -- relacionamentos One to One -- -- -- -- -- -- -- -- //
             modelBuilder.Entity<TabCliente>(e => {
 
-                e.HasKey(tc => tc.codigoCliente);
+                e.HasKey(tu => tu.codigoCliente); 
 
-                
             });
 
             modelBuilder.Entity<TabEmissor>(e => {
 
-                e.HasKey(te => te.codigoEmissor);
-                
+                e.HasKey(tu => tu.codigoEmissor);
+
             });
+
+            modelBuilder.Entity<TabUsuario>(e => {
+
+                e.HasKey(tu => tu.codigoUsuario);
+
+            });
+
+
+            modelBuilder.Entity<TabUsuario>(e => {
+
+                e.HasOne(tu => tu.tabCliente)
+                 .WithOne(tu => tu.tabUsuario)
+                 .HasForeignKey<TabCliente>();
+
+            });
+
+            modelBuilder.Entity<TabUsuario>(e => {
+
+                e.HasOne(tu => tu.tabEmissor)
+                 .WithOne(tu => tu.tabUsuario)
+                 .HasForeignKey<TabEmissor>();
+
+            });
+            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+
 
             modelBuilder.Entity<TabObjeto>(e => {
 

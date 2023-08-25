@@ -12,7 +12,7 @@ using NodeHunterWebAPI.Persistence;
 namespace NodeHunterWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbNodeHunterContext))]
-    [Migration("20230825014442_FirstMigration")]
+    [Migration("20230825142324_FirstMigration")]
     partial class FirstMigration
     {
         /// <inheritdoc />
@@ -28,28 +28,7 @@ namespace NodeHunterWebAPI.Persistence.Migrations
             modelBuilder.Entity("NodeHunterWebAPI.Entities.TabCliente", b =>
                 {
                     b.Property<int>("codigoCliente")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoCliente"));
-
-                    b.Property<int>("codigoUsuario")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isEmissor")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("loginName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("nomeUsuario")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("codigoCliente");
 
@@ -64,7 +43,13 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoDocumento"));
 
-                    b.Property<int>("clientecodigoCliente")
+                    b.Property<int>("codigoCliente")
+                        .HasColumnType("int");
+
+                    b.Property<int>("codigoEmissor")
+                        .HasColumnType("int");
+
+                    b.Property<int>("codigoItemDocumento")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("dataEmissao")
@@ -72,9 +57,6 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("emissorcodigoEmissor")
-                        .HasColumnType("int");
 
                     b.Property<bool>("isCanceled")
                         .HasColumnType("bit");
@@ -84,38 +66,13 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
                     b.HasKey("codigoDocumento");
 
-                    b.HasIndex("clientecodigoCliente");
-
-                    b.HasIndex("emissorcodigoEmissor");
-
                     b.ToTable("tabDocumento");
                 });
 
             modelBuilder.Entity("NodeHunterWebAPI.Entities.TabEmissor", b =>
                 {
                     b.Property<int>("codigoEmissor")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoEmissor"));
-
-                    b.Property<int>("codigoUsuario")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("isEmissor")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("loginName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("nomeUsuario")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("codigoEmissor");
 
@@ -124,10 +81,10 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("NodeHunterWebAPI.Entities.TabItemDocumento", b =>
                 {
-                    b.Property<int>("codigoDocumento")
+                    b.Property<int>("codigoItemDocumento")
                         .HasColumnType("int");
 
-                    b.Property<int>("codigoItemDocumento")
+                    b.Property<int>("codigoDocumento")
                         .HasColumnType("int");
 
                     b.Property<int>("tabObjetocodigoObjeto")
@@ -136,7 +93,7 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                     b.Property<int>("tabPermissaocodigoPermissao")
                         .HasColumnType("int");
 
-                    b.HasKey("codigoDocumento", "codigoItemDocumento");
+                    b.HasKey("codigoItemDocumento");
 
                     b.HasIndex("tabObjetocodigoObjeto");
 
@@ -185,30 +142,61 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                     b.ToTable("tabPermissao");
                 });
 
-            modelBuilder.Entity("NodeHunterWebAPI.Entities.TabDocumento", b =>
+            modelBuilder.Entity("NodeHunterWebAPI.Entities.TabUsuario", b =>
                 {
-                    b.HasOne("NodeHunterWebAPI.Entities.TabCliente", "cliente")
-                        .WithMany()
-                        .HasForeignKey("clientecodigoCliente")
+                    b.Property<int>("codigoUsuario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoUsuario"));
+
+                    b.Property<bool>("isEmissor")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("loginName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("nomeUsuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("codigoUsuario");
+
+                    b.ToTable("tabUsuario");
+                });
+
+            modelBuilder.Entity("NodeHunterWebAPI.Entities.TabCliente", b =>
+                {
+                    b.HasOne("NodeHunterWebAPI.Entities.TabUsuario", "tabUsuario")
+                        .WithOne("tabCliente")
+                        .HasForeignKey("NodeHunterWebAPI.Entities.TabCliente", "codigoCliente")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("NodeHunterWebAPI.Entities.TabEmissor", "emissor")
-                        .WithMany()
-                        .HasForeignKey("emissorcodigoEmissor")
+                    b.Navigation("tabUsuario");
+                });
+
+            modelBuilder.Entity("NodeHunterWebAPI.Entities.TabEmissor", b =>
+                {
+                    b.HasOne("NodeHunterWebAPI.Entities.TabUsuario", "tabUsuario")
+                        .WithOne("tabEmissor")
+                        .HasForeignKey("NodeHunterWebAPI.Entities.TabEmissor", "codigoEmissor")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("cliente");
-
-                    b.Navigation("emissor");
+                    b.Navigation("tabUsuario");
                 });
 
             modelBuilder.Entity("NodeHunterWebAPI.Entities.TabItemDocumento", b =>
                 {
-                    b.HasOne("NodeHunterWebAPI.Entities.TabDocumento", null)
-                        .WithMany("tabItemDocumentos")
-                        .HasForeignKey("codigoDocumento")
+                    b.HasOne("NodeHunterWebAPI.Entities.TabDocumento", "tabDocumento")
+                        .WithOne("tabItemDocumento")
+                        .HasForeignKey("NodeHunterWebAPI.Entities.TabItemDocumento", "codigoItemDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -224,6 +212,8 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("tabDocumento");
+
                     b.Navigation("tabObjeto");
 
                     b.Navigation("tabPermissao");
@@ -231,7 +221,15 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("NodeHunterWebAPI.Entities.TabDocumento", b =>
                 {
-                    b.Navigation("tabItemDocumentos");
+                    b.Navigation("tabItemDocumento")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NodeHunterWebAPI.Entities.TabUsuario", b =>
+                {
+                    b.Navigation("tabCliente");
+
+                    b.Navigation("tabEmissor");
                 });
 #pragma warning restore 612, 618
         }

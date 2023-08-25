@@ -12,37 +12,22 @@ namespace NodeHunterWebAPI.Persistence.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "tabCliente",
+                name: "tabDocumento",
                 columns: table => new
                 {
-                    codigoCliente = table.Column<int>(type: "int", nullable: false)
+                    codigoDocumento = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    codigoUsuario = table.Column<int>(type: "int", nullable: false),
-                    nomeUsuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    loginName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isEmissor = table.Column<bool>(type: "bit", nullable: false)
+                    codigoItemDocumento = table.Column<int>(type: "int", nullable: false),
+                    codigoCliente = table.Column<int>(type: "int", nullable: false),
+                    codigoEmissor = table.Column<int>(type: "int", nullable: false),
+                    isOpen = table.Column<bool>(type: "bit", nullable: false),
+                    isCanceled = table.Column<bool>(type: "bit", nullable: false),
+                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    dataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tabCliente", x => x.codigoCliente);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tabEmissors",
-                columns: table => new
-                {
-                    codigoEmissor = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    codigoUsuario = table.Column<int>(type: "int", nullable: false),
-                    nomeUsuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    loginName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isEmissor = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabEmissors", x => x.codigoEmissor);
+                    table.PrimaryKey("PK_tabDocumento", x => x.codigoDocumento);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,50 +59,36 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tabDocumento",
+                name: "tabUsuario",
                 columns: table => new
                 {
-                    codigoDocumento = table.Column<int>(type: "int", nullable: false)
+                    codigoUsuario = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    clientecodigoCliente = table.Column<int>(type: "int", nullable: false),
-                    emissorcodigoEmissor = table.Column<int>(type: "int", nullable: false),
-                    isOpen = table.Column<bool>(type: "bit", nullable: false),
-                    isCanceled = table.Column<bool>(type: "bit", nullable: false),
-                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    dataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    nomeUsuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    loginName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isEmissor = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tabDocumento", x => x.codigoDocumento);
-                    table.ForeignKey(
-                        name: "FK_tabDocumento_tabCliente_clientecodigoCliente",
-                        column: x => x.clientecodigoCliente,
-                        principalTable: "tabCliente",
-                        principalColumn: "codigoCliente",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_tabDocumento_tabEmissors_emissorcodigoEmissor",
-                        column: x => x.emissorcodigoEmissor,
-                        principalTable: "tabEmissors",
-                        principalColumn: "codigoEmissor",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_tabUsuario", x => x.codigoUsuario);
                 });
 
             migrationBuilder.CreateTable(
                 name: "tabItemDocumento",
                 columns: table => new
                 {
-                    codigoDocumento = table.Column<int>(type: "int", nullable: false),
                     codigoItemDocumento = table.Column<int>(type: "int", nullable: false),
+                    codigoDocumento = table.Column<int>(type: "int", nullable: false),
                     tabObjetocodigoObjeto = table.Column<int>(type: "int", nullable: false),
                     tabPermissaocodigoPermissao = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tabItemDocumento", x => new { x.codigoDocumento, x.codigoItemDocumento });
+                    table.PrimaryKey("PK_tabItemDocumento", x => x.codigoItemDocumento);
                     table.ForeignKey(
-                        name: "FK_tabItemDocumento_tabDocumento_codigoDocumento",
-                        column: x => x.codigoDocumento,
+                        name: "FK_tabItemDocumento_tabDocumento_codigoItemDocumento",
+                        column: x => x.codigoItemDocumento,
                         principalTable: "tabDocumento",
                         principalColumn: "codigoDocumento",
                         onDelete: ReferentialAction.Cascade);
@@ -135,15 +106,39 @@ namespace NodeHunterWebAPI.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_tabDocumento_clientecodigoCliente",
-                table: "tabDocumento",
-                column: "clientecodigoCliente");
+            migrationBuilder.CreateTable(
+                name: "tabCliente",
+                columns: table => new
+                {
+                    codigoCliente = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabCliente", x => x.codigoCliente);
+                    table.ForeignKey(
+                        name: "FK_tabCliente_tabUsuario_codigoCliente",
+                        column: x => x.codigoCliente,
+                        principalTable: "tabUsuario",
+                        principalColumn: "codigoUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
-            migrationBuilder.CreateIndex(
-                name: "IX_tabDocumento_emissorcodigoEmissor",
-                table: "tabDocumento",
-                column: "emissorcodigoEmissor");
+            migrationBuilder.CreateTable(
+                name: "tabEmissors",
+                columns: table => new
+                {
+                    codigoEmissor = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabEmissors", x => x.codigoEmissor);
+                    table.ForeignKey(
+                        name: "FK_tabEmissors_tabUsuario_codigoEmissor",
+                        column: x => x.codigoEmissor,
+                        principalTable: "tabUsuario",
+                        principalColumn: "codigoUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tabItemDocumento_tabObjetocodigoObjeto",
@@ -160,7 +155,16 @@ namespace NodeHunterWebAPI.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "tabCliente");
+
+            migrationBuilder.DropTable(
+                name: "tabEmissors");
+
+            migrationBuilder.DropTable(
                 name: "tabItemDocumento");
+
+            migrationBuilder.DropTable(
+                name: "tabUsuario");
 
             migrationBuilder.DropTable(
                 name: "tabDocumento");
@@ -170,12 +174,6 @@ namespace NodeHunterWebAPI.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "tabPermissao");
-
-            migrationBuilder.DropTable(
-                name: "tabCliente");
-
-            migrationBuilder.DropTable(
-                name: "tabEmissors");
         }
     }
 }
