@@ -41,7 +41,7 @@ namespace NodeHunterWebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(TabNode tabNodeInput)
+        public IActionResult Post(TabDocumento tabNodeInput)
         {
             // adicao logica
             this._dbContext.tabNode.Add(tabNodeInput);
@@ -53,7 +53,7 @@ namespace NodeHunterWebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, TabNode tabNodeInput)
+        public IActionResult Update(int id, TabDocumento tabNodeInput)
         {
             var tab_node = this._dbContext.tabNode.SingleOrDefault(d => d.Id == id);
 
