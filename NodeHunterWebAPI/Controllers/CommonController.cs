@@ -1,4 +1,5 @@
-﻿using NodeHunterWebAPI.Entities;
+﻿/*
+using NodeHunterWebAPI.Entities;
 using NodeHunterWebAPI.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -102,3 +103,4 @@ namespace NodeHunterWebAPI.Controllers
         }
     }
 }
+*/

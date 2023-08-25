@@ -12,7 +12,7 @@ namespace NodeHunterWebAPI.Persistence
         //DbSet funcionando ai como uma tabela (armazenando registros do tipo CommonEntity)
         public DbSet<TabDocumento> tabDocumento { get; set; }
         public DbSet<TabItemDocumento> tabItemDocumento { get; set; }
-        public DbSet<TabUsuario> tabUsuario { get; set; }
+//        public DbSet<TabUsuario> tabUsuario { get; set; }
         public DbSet<TabCliente> tabCliente { get; set; }
         public DbSet<TabEmissor> tabEmissors { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
@@ -33,28 +33,40 @@ namespace NodeHunterWebAPI.Persistence
             });
 
 
-            modelBuilder.Entity<TabUsuario>(e => {
 
-                //definindo primary key
-                e.HasKey(tu => tu.codigoUsuario);
+            modelBuilder.Entity<TabItemDocumento>(e => {
 
-                e.HasMany(tc => tc.cliente).WithOne()
-                                           .HasForeignKey(tc => tc.codigoUsuario);
-
-                e.HasMany(te => te.emissor).WithOne()
-                                           .HasForeignKey(te => te.codigoUsuario);
+                //definindo chave primaria composta
+                e.HasKey(tid => new {tid.codigoDocumento, tid.codigoItemDocumento});
 
             });
 
             modelBuilder.Entity<TabCliente>(e => {
 
+                e.HasKey(tc => tc.codigoCliente);
+
                 
             });
 
             modelBuilder.Entity<TabEmissor>(e => {
-                 
+
+                e.HasKey(te => te.codigoEmissor);
+                
+            });
+
+            modelBuilder.Entity<TabObjeto>(e => {
+
+                e.HasKey(to => to.codigoObjeto);
 
             });
+
+            modelBuilder.Entity<TabPermissao>(e => {
+
+                e.HasKey(tp => tp.codigoPermissao);
+
+            });
+
+
         }
 
     }

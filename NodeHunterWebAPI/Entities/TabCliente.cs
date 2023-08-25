@@ -2,6 +2,7 @@
 {
     public class TabCliente : TabUsuario
     {
+        public int codigoCliente { set; get; }
  
     }
 }
