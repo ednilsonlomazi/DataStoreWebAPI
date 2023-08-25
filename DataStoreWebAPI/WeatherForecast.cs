@@ -1,4 +1,4 @@
-namespace NodeHunterWebAPI
+namespace DataStoreWebAPI
 {
     public class WeatherForecast
     {

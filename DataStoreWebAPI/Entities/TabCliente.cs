@@ -1,4 +1,4 @@
-﻿namespace NodeHunterWebAPI.Entities
+﻿namespace DataStoreWebAPI.Entities
 {
     public class TabCliente
     {

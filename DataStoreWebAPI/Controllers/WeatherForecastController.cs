@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace NodeHunterWebAPI.Controllers
+namespace DataStoreWebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]

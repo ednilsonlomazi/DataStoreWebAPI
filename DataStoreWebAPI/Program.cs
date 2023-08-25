@@ -1,4 +1,4 @@
-using NodeHunterWebAPI.Persistence;
+using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ------------------ Configuracao de Acesso ao SQL Server ---------------
 // coletando a string de conexao
 var connectionString = builder.Configuration.GetConnectionString("NodeHunter");
-builder.Services.AddDbContext<DbNodeHunterContext>(s => s.UseSqlServer(connectionString));
+builder.Services.AddDbContext<DbDataStoreContext>(s => s.UseSqlServer(connectionString));
 
 // -------------------------------------------------------------------------
 

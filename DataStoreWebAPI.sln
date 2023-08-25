@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NodeHunterWebAPI", "NodeHunterWebAPI\NodeHunterWebAPI.csproj", "{5C6E859A-0B60-4D0F-964C-F8782C348168}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStoreWebAPI", "DataStoreWebAPI\DataStoreWebAPI.csproj", "{5C6E859A-0B60-4D0F-964C-F8782C348168}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

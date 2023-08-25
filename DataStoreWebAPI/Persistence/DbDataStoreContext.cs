@@ -1,11 +1,11 @@
-﻿using NodeHunterWebAPI.Entities;
+﻿using DataStoreWebAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace NodeHunterWebAPI.Persistence
+namespace DataStoreWebAPI.Persistence
 {
-    public class DbNodeHunterContext : DbContext
+    public class DbDataStoreContext : DbContext
     {
-        public DbNodeHunterContext(DbContextOptions<DbNodeHunterContext> options) : base(options) 
+        public DbDataStoreContext(DbContextOptions<DbDataStoreContext> options) : base(options) 
         {
             
         }
