@@ -118,7 +118,7 @@ namespace DataStoreWebAPI.Controllers
             {
                 this._dbContext.tabItemDocumento.Add(tabItemDocumentoInput);
                 this._dbContext.SaveChanges();
-                return Ok(tabItemDocumentoInput);
+                return Ok(tabItemDocumentoInput); //teste
             };
 
             return NoContent();
