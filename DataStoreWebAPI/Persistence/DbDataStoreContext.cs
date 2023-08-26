@@ -75,7 +75,11 @@ namespace DataStoreWebAPI.Persistence
 
             modelBuilder.Entity<TabObjeto>(e => {
 
-                e.HasKey(to => to.codigoObjeto);
+                e.HasKey(to => new { to.serverName, to.codigoBancoDados, to.codigoObjeto });
+                e.Property(to => to.serverName).ValueGeneratedNever();
+                e.Property(to => to.codigoBancoDados).ValueGeneratedNever();
+                e.Property(to => to.codigoObjeto).ValueGeneratedNever();
+
 
             });
 

@@ -2,8 +2,9 @@
 {
     public class TabObjeto
     {
-        public int codigoObjeto { get; set; }
+        public string serverName { get; set; }
         public int codigoBancoDados { get; set; }
+        public int codigoObjeto { get; set; }
         public int codigoSchema { get; set; }
         public string descricaoTipoObjeto { get; set; } 
 
