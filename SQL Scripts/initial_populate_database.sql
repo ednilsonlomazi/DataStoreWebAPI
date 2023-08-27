@@ -1,5 +1,6 @@
 USE AdventureWorks2022;
 
+--------------- populando objetos disponiveis -------------------
 INSERT INTO dbdatastore.dbo.tabObjeto
 (
 	serverName,
@@ -16,3 +17,14 @@ SELECT @@SERVERNAME,
 FROM sys.objects sob
 WHERE 1 = 1
 	AND sob.[type] IN ('U', 'V', 'P') -- user tables, views and procedures
+
+----------------- populando permissoes ----------------------
+INSERT INTO dbdatastore.dbo.tabPermissao 
+(
+	descricaoPermissao,
+	classePermissao
+
+)
+SELECT DISTINCT fnp.[permission_name],
+				fnp.class_desc
+FROM sys.fn_builtin_permissions('OBJECT') fnp

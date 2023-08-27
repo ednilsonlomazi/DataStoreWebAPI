@@ -1,7 +1,7 @@
 USE dbdatastore;
 GO
 
-ALTER PROCEDURE dbo.spr_list_permissions 
+CREATE PROCEDURE dbo.spr_list_permissions 
 
 @database VARCHAR(256) = 'AdventureWorks2022',
 @username VARCHAR(256) = 'Bob',
@@ -18,7 +18,9 @@ AS
 
 			WITH cte AS
 			(
-				SELECT so.object_id [object_id],
+				SELECT BD_ID() [database_id],
+					   so.object_id [object_id],
+					   sc.[schema_id],
 					   sc.[name] [schema_name],
 					   so.[name] [object_name],
 					   CONCAT(sc.[name], ''.'', so.[name]) [name],
@@ -32,7 +34,9 @@ AS
 					AND so.[type] IN (''U'', ''V'')
 					AND [permissions].subentity_name = ''''
 				UNION ALL
-				SELECT so.object_id [object_id],
+				SELECT BD_ID() [database_id], 
+					   so.object_id [object_id],
+					   sc.[schema_id],
 					   sc.[name] [schema_name],
 					   so.[name] [object_name],
 					   CONCAT(sc.[name], ''.'', so.[name]) [name],

@@ -17,6 +17,7 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabEmissor> tabEmissors { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
+        public DbSet<TabRelacionaClienteObjetoPermissao> tabRelacionaClienteObjetoPermissaos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,6 +87,13 @@ namespace DataStoreWebAPI.Persistence
             modelBuilder.Entity<TabPermissao>(e => {
 
                 e.HasKey(tp => tp.codigoPermissao);
+
+            });
+
+            modelBuilder.Entity<TabRelacionaClienteObjetoPermissao>(e => {
+
+                e.HasNoKey();
+
 
             });
 

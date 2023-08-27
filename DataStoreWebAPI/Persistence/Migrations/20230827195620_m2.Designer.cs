@@ -4,6 +4,7 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    partial class DbDataStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20230827195620_m2")]
+    partial class m2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,33 +153,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.ToTable("tabPermissao");
                 });
 
-            modelBuilder.Entity("DataStoreWebAPI.Entities.TabRelacionaClienteObjetoPermissao", b =>
-                {
-                    b.Property<int>("tabClientecodigoCliente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tabObjetocodigoBancoDados")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tabObjetocodigoObjeto")
-                        .HasColumnType("int");
-
-                    b.Property<string>("tabObjetoserverName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("tabPermissaocodigoPermissao")
-                        .HasColumnType("int");
-
-                    b.HasIndex("tabClientecodigoCliente");
-
-                    b.HasIndex("tabPermissaocodigoPermissao");
-
-                    b.HasIndex("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto");
-
-                    b.ToTable("tabRelacionaClienteObjetoPermissaos");
-                });
-
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabUsuario", b =>
                 {
                     b.Property<int>("codigoUsuario")
@@ -248,33 +224,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("tabDocumento");
-
-                    b.Navigation("tabObjeto");
-
-                    b.Navigation("tabPermissao");
-                });
-
-            modelBuilder.Entity("DataStoreWebAPI.Entities.TabRelacionaClienteObjetoPermissao", b =>
-                {
-                    b.HasOne("DataStoreWebAPI.Entities.TabCliente", "tabCliente")
-                        .WithMany()
-                        .HasForeignKey("tabClientecodigoCliente")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataStoreWebAPI.Entities.TabPermissao", "tabPermissao")
-                        .WithMany()
-                        .HasForeignKey("tabPermissaocodigoPermissao")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "tabObjeto")
-                        .WithMany()
-                        .HasForeignKey("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("tabCliente");
 
                     b.Navigation("tabObjeto");
 
