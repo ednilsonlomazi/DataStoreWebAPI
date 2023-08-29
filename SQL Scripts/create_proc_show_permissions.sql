@@ -1,24 +1,48 @@
 USE dbdatastore;
 GO
 
-CREATE PROCEDURE dbo.spr_list_permissions 
-
+CREATE PROCEDURE dbo.spr_gera_relatorio_permissoes 
+@serverName VARCHAR(256) = 'LAPTOP-RU2VMCN7',
 @database VARCHAR(256) = 'AdventureWorks2022',
-@username VARCHAR(256) = 'Bob',
-@object_id INT
-
+@username VARCHAR(256) = 'Bob'
 AS
+
+
+	DECLARE @tab_bancos 
+	TABLE (
+			cod INT IDENTITY(1,1), 
+			serverName VARCHAR(256), 
+			bancoDados VARCHAR(256), 
+			loop_time BIT DEFAULT 0
+	);
+	DECLARE @codSelecao INT, 
+			@serverNameSelecao VARCHAR(256), 
+			@bancoDadosSelecao VARCHAR(256);
 	
-	DECLARE @comando_base NVARCHAR(MAX) = 
+	
+	INSERT INTO @tab_bancos 
+	(
+		serverName,
+		bancoDados
+	)
+	SELECT DISTINCT tob.serverName,
+					DB_NAME(tob.codigoBancoDados)
+	FROM dbdatastore.dbo.tabObjeto tob WITH (NOLOCK)
+
+	
+	DECLARE @comando_base NVARCHAR(MAX),
+			@comando NVARCHAR(MAX);
+		
+		SET @comando_base =
 
 		'
-			USE @dynamic_sql_param_database;
+			USE @dynamic_sql_db;
 
-			EXECUTE AS USER = @dynamic_sql_param_user;
+			EXECUTE AS USER = ''@dynamic_sql_user'';
 
 			WITH cte AS
 			(
-				SELECT BD_ID() [database_id],
+				SELECT DB_ID() [database_id],
 					   so.object_id [object_id],
 					   sc.[schema_id],
 					   sc.[name] [schema_name],
@@ -29,12 +53,12 @@ AS
 				FROM sys.objects so
 					LEFT JOIN sys.schemas sc
 						ON so.schema_id = sc.schema_id
-					CROSS APPLY fn_my_permissions(sc.[name] + ''.'' + so.[name], ''OBJECT'') [permissions]
+					CROSS APPLY sys.fn_my_permissions(sc.[name] + ''.'' + so.[name], ''OBJECT'') [permissions]
 				WHERE 1 = 1
 					AND so.[type] IN (''U'', ''V'')
 					AND [permissions].subentity_name = ''''
 				UNION ALL
-				SELECT BD_ID() [database_id], 
+				SELECT DB_ID() [database_id], 
 					   so.object_id [object_id],
 					   sc.[schema_id],
 					   sc.[name] [schema_name],
@@ -45,25 +69,45 @@ AS
 				FROM sys.objects so
 					LEFT JOIN sys.schemas sc
 						ON so.schema_id = sc.schema_id
-					CROSS APPLY fn_my_permissions(sc.[name] + ''.'' + so.[name], ''OBJECT'') [permissions]
+					CROSS APPLY sys.fn_my_permissions(sc.[name] + ''.'' + so.[name], ''OBJECT'') [permissions]
 				WHERE 1 = 1
 					AND so.[type] IN (''P'', ''FN'')
 			)
 			SELECT * FROM cte cte
 			WHERE 1 = 1
-				AND cte.[object_id] = @dynamic_sql_param_object_id
+	
 
-		',
-		@comando NVARCHAR(MAX);
+		'
 
-	SET @comando = REPLACE(
-						REPLACE(
+	WHILE EXISTS (SELECT TOP 1 1 check_while FROM @tab_bancos WHERE loop_time = 0)
+	BEGIN
+
+		
+		SELECT TOP 1 @codSelecao = tbs.cod,
+					 @serverNameSelecao = tbs.serverName, 
+					 @bancoDadosSelecao = tbs.bancoDados 
+		FROM @tab_bancos tbs
+		WHERE tbs.loop_time = 0
+		ORDER BY tbs.cod DESC
+		
+		SET @comando = REPLACE(
 							REPLACE(
-								@comando_base, 
-									'@dynamic_sql_param_database', @database
-							), '@dynamic_sql_param_user', @username
-						), '@dynamic_sql_param_object_id', @object_id
-					);
+								REPLACE(
+									@comando_base, 
+										'@dynamic_sql_server', @serverNameSelecao
+								), '@dynamic_sql_db', @bancoDadosSelecao
+							), '@dynamic_sql_user', @username
+						)
 
-	EXEC (@comando);
+		EXEC (@comando);
+
+		UPDATE @tab_bancos
+		SET loop_time = 1
+		FROM @tab_bancos tbs
+		WHERE tbs.cod = @codSelecao
+		
+	END	
+		
+
+
 GO
