@@ -75,6 +75,13 @@ AS
 			)
 			SELECT * FROM cte cte
 			WHERE 1 = 1
+				AND EXISTS (
+					SELECT to.codigoObjeto
+					FROM dbdatastore.dbo.tabObjeto to WITH (NOLOCK)
+					WHERE 1 = 1
+						AND cte.database_id = to.codigoObjeto
+						AND cte.object_id = to.codigoObjeto
+				)
 	
 
 		'
