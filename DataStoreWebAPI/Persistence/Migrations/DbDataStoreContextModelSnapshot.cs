@@ -79,6 +79,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
                 {
                     b.Property<int>("codigoItemDocumento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoItemDocumento"));
+
+                    b.Property<int>("IdtabDocumento")
                         .HasColumnType("int");
 
                     b.Property<int>("codigoDocumento")
@@ -98,6 +104,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("codigoItemDocumento");
+
+                    b.HasIndex("IdtabDocumento");
 
                     b.HasIndex("tabPermissaocodigoPermissao");
 
@@ -199,9 +207,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
                 {
-                    b.HasOne("DataStoreWebAPI.Entities.TabDocumento", "tabDocumento")
-                        .WithOne("tabItemDocumento")
-                        .HasForeignKey("DataStoreWebAPI.Entities.TabItemDocumento", "codigoItemDocumento")
+                    b.HasOne("DataStoreWebAPI.Entities.TabDocumento", null)
+                        .WithMany("tabItemDocumento")
+                        .HasForeignKey("IdtabDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -217,8 +225,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tabDocumento");
-
                     b.Navigation("tabObjeto");
 
                     b.Navigation("tabPermissao");
@@ -226,8 +232,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>
                 {
-                    b.Navigation("tabItemDocumento")
-                        .IsRequired();
+                    b.Navigation("tabItemDocumento");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabUsuario", b =>

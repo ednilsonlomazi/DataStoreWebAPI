@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m1 : Migration
+    public partial class m13 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     codigoPermissao = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    descricaoPermissao = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    descricaoPermissao = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    classePermissao = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,8 +67,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     nomeUsuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     loginName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isEmissor = table.Column<bool>(type: "bit", nullable: false)
+                    password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -78,8 +78,10 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 name: "tabItemDocumento",
                 columns: table => new
                 {
-                    codigoItemDocumento = table.Column<int>(type: "int", nullable: false),
+                    codigoItemDocumento = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     codigoDocumento = table.Column<int>(type: "int", nullable: false),
+                    IdtabDocumento = table.Column<int>(type: "int", nullable: false),
                     tabObjetoserverName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     tabObjetocodigoBancoDados = table.Column<int>(type: "int", nullable: false),
                     tabObjetocodigoObjeto = table.Column<int>(type: "int", nullable: false),
@@ -89,8 +91,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_tabItemDocumento", x => x.codigoItemDocumento);
                     table.ForeignKey(
-                        name: "FK_tabItemDocumento_tabDocumento_codigoItemDocumento",
-                        column: x => x.codigoItemDocumento,
+                        name: "FK_tabItemDocumento_tabDocumento_IdtabDocumento",
+                        column: x => x.IdtabDocumento,
                         principalTable: "tabDocumento",
                         principalColumn: "codigoDocumento",
                         onDelete: ReferentialAction.Cascade);
@@ -141,6 +143,11 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         principalColumn: "codigoUsuario",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tabItemDocumento_IdtabDocumento",
+                table: "tabItemDocumento",
+                column: "IdtabDocumento");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tabItemDocumento_tabObjetoserverName_tabObjetocodigoBancoDados_tabObjetocodigoObjeto",

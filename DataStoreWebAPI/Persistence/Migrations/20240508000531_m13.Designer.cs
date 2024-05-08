@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20230826131656_m1")]
-    partial class m1
+    [Migration("20240508000531_m13")]
+    partial class m13
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
                 {
                     b.Property<int>("codigoItemDocumento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoItemDocumento"));
+
+                    b.Property<int>("IdtabDocumento")
                         .HasColumnType("int");
 
                     b.Property<int>("codigoDocumento")
@@ -101,6 +107,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("codigoItemDocumento");
+
+                    b.HasIndex("IdtabDocumento");
 
                     b.HasIndex("tabPermissaocodigoPermissao");
 
@@ -140,6 +148,10 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoPermissao"));
 
+                    b.Property<string>("classePermissao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("descricaoPermissao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -156,9 +168,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoUsuario"));
-
-                    b.Property<bool>("isEmissor")
-                        .HasColumnType("bit");
 
                     b.Property<string>("loginName")
                         .IsRequired()
@@ -201,9 +210,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
                 {
-                    b.HasOne("DataStoreWebAPI.Entities.TabDocumento", "tabDocumento")
-                        .WithOne("tabItemDocumento")
-                        .HasForeignKey("DataStoreWebAPI.Entities.TabItemDocumento", "codigoItemDocumento")
+                    b.HasOne("DataStoreWebAPI.Entities.TabDocumento", null)
+                        .WithMany("tabItemDocumento")
+                        .HasForeignKey("IdtabDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -219,8 +228,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("tabDocumento");
-
                     b.Navigation("tabObjeto");
 
                     b.Navigation("tabPermissao");
@@ -228,8 +235,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>
                 {
-                    b.Navigation("tabItemDocumento")
-                        .IsRequired();
+                    b.Navigation("tabItemDocumento");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabUsuario", b =>

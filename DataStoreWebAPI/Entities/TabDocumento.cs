@@ -2,14 +2,6 @@
 {
     public class TabDocumento
     {
-        public TabDocumento()
-        {
-            
-            this.dataSolicitacao = DateTime.Now;
-            this.isOpen = true;
-            this.isCanceled = false;
-
-        }
         public int codigoDocumento { get; set; }
         public int codigoItemDocumento { get; set; }
         public int codigoCliente { get; set; }    
@@ -18,7 +10,17 @@
         public bool isCanceled { get; set; }
         public DateTime dataSolicitacao { get; set; }
         public DateTime dataEmissao { get; set; }
-        public TabItemDocumento tabItemDocumento { get; set; } // foreigh key to item de documento
+        public List<TabItemDocumento> tabItemDocumento { get; set; } // foreigh key to item de documento
+
+        public TabDocumento()
+        {
+            
+            this.dataSolicitacao = DateTime.Now;
+            this.isOpen = true;
+            this.isCanceled = false;
+            this.tabItemDocumento = new List<TabItemDocumento>();
+
+        }
 
         public void AtualizarDocumento(bool isOpen, DateTime dataEmissao)
         {

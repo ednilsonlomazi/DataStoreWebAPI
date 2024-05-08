@@ -21,20 +21,21 @@ namespace DataStoreWebAPI.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-             
-            modelBuilder.Entity<TabDocumento>(e => {
-
-                e.HasKey(td => td.codigoDocumento); // definindo primary key composta
-                e.HasOne(tid => tid.tabItemDocumento)
-                 .WithOne(td => td.tabDocumento)
-                 .HasForeignKey<TabItemDocumento>(); // a foreign key é a primary key da child tab quando (vazio)
-            });
 
             modelBuilder.Entity<TabItemDocumento>(e => {
 
-                e.HasKey(tid => tid.codigoItemDocumento); // definindo primary key composta
+                e.HasKey(tu => tu.codigoItemDocumento); 
 
             });
+
+            modelBuilder.Entity<TabDocumento>(e => {
+
+                e.HasKey(td => td.codigoDocumento); // definindo primary key composta
+                e.HasMany(tid => tid.tabItemDocumento)
+                 .WithOne()
+                 .HasForeignKey(tid => tid.IdtabDocumento); // a foreign key é a primary key da child tab quando (vazio)
+            });
+
 
             // -- -- -- -- -- -- -- -- -- relacionamentos One to One -- -- -- -- -- -- -- -- //
             modelBuilder.Entity<TabCliente>(e => {
