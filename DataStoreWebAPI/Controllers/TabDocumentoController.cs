@@ -21,6 +21,50 @@ namespace DataStoreWebAPI.Controllers
         }
 
 
+        // retorna todos as solicitacoes de acesso do cliente
+        [HttpGet("solicitacoes-cliente/{cod_cliente}")]
+        public IActionResult GetSolicitacoesCliente(int cod_cliente)
+        {
+            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.codigoCliente == cod_cliente).SingleOrDefault();
+
+            if (tabDocumento != null)
+            {
+                return Ok(tabDocumento);
+            };
+
+            return NotFound();
+
+        }
+
+        // cria uma solicitacao de acesso
+        [HttpPost("realizar-solicitacao")]
+        public IActionResult PostRealizarSolicitacao(TabDocumento tabDocumentoInput)
+        {
+            this._dbContext.tabDocumento.Add(tabDocumentoInput);
+
+            this._dbContext.SaveChanges();
+
+            return Ok(tabDocumentoInput);
+        }
+
+        // adiciona item em uma solictacao existente
+        [HttpPost("adicionar-item-solicitacao/{cod}")]
+        public IActionResult PostAdicionarItemSolicitacao(int cod, TabItemDocumento tabItemDocumentoInput)
+        {
+            tabItemDocumentoInput.codigoDocumento = cod;
+
+            var tabDocumento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == cod);
+
+            if (tabDocumento != null) 
+            {
+                this._dbContext.tabItemDocumento.Add(tabItemDocumentoInput);
+                this._dbContext.SaveChanges();
+                return Ok(tabItemDocumentoInput); //teste
+            };
+
+            return NoContent();
+        }
+
         [HttpGet("solicitacao-realizada/{cod}")]
         public IActionResult GetSolicitacaoRealizada(int cod)
         {
@@ -35,15 +79,6 @@ namespace DataStoreWebAPI.Controllers
 
         }
 
-        [HttpPost("realizar-solicitacao")]
-        public IActionResult PostRealizarSolicitacao(TabDocumento tabDocumentoInput)
-        {
-            this._dbContext.tabDocumento.Add(tabDocumentoInput);
-
-            this._dbContext.SaveChanges();
-
-            return CreatedAtAction(nameof(GetSolicitacaoRealizada), new { id = tabDocumentoInput.codigoDocumento }, tabDocumentoInput);
-        }
 
         [HttpPut("atualizar-solicitacao/{cod}")]
         public IActionResult UpdateDocumento(int cod, TabDocumento tabDocumentoInput)
@@ -79,21 +114,5 @@ namespace DataStoreWebAPI.Controllers
             return NoContent();
         }
 
-        [HttpPost("adicionar-item-solicitacao/{cod}")]
-        public IActionResult PostAdicionarItemSolicitacao(int cod, TabItemDocumento tabItemDocumentoInput)
-        {
-            tabItemDocumentoInput.codigoDocumento = cod;
-
-            var tabDocumento = this._dbContext.tabDocumento.Any(t => t.codigoDocumento == cod);
-
-            if (tabDocumento != null) 
-            {
-                this._dbContext.tabItemDocumento.Add(tabItemDocumentoInput);
-                this._dbContext.SaveChanges();
-                return Ok(tabItemDocumentoInput); //teste
-            };
-
-            return NoContent();
-        }
     }
 }

@@ -2,16 +2,20 @@
 {
     public class TabObjeto
     {
-        public string serverName { get; set; }
+
         public int codigoBancoDados { get; set; }
         public int codigoObjeto { get; set; }
         public int codigoSchema { get; set; }
         public string descricaoTipoObjeto { get; set; } 
+        public string serverName { get; set; }
+        public string DatabaseName {get; set;}        
+        public string ObjectName {get; set;}
 
-        public TabObjeto(int codigoObjeto, int codigoBancoDados)
+
+
+        public TabObjeto()
         {
-            this.codigoObjeto = codigoObjeto;
-            this.codigoBancoDados = codigoBancoDados;
+
         }
     }
 }

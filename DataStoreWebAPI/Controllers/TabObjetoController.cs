@@ -35,10 +35,12 @@ namespace DataStoreWebAPI.Controllers
 
         }
 
-        [HttpGet("objetos-disponiveis/{cod}")]
-        public IActionResult GetObjetoDisponivel(int cod)
+        [HttpGet("objetos-disponiveis/{server_name}/{cod_db}/{cod_obj}")]
+        public IActionResult GetObjetoDisponivel(string server_name, int cod_db, int cod_obj)
         {
-            var tabObjeto = this._dbContext.tabObjeto.SingleOrDefault(t => t.codigoObjeto == cod);
+            var tabObjeto = this._dbContext.tabObjeto.Where(to => to.serverName == server_name && 
+                                                            to.codigoBancoDados == cod_db &&
+                                                            to.codigoObjeto == cod_obj).SingleOrDefault();
 
             if (tabObjeto != null)
             {
