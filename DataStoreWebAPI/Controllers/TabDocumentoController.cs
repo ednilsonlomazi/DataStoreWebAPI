@@ -10,44 +10,16 @@ namespace DataStoreWebAPI.Controllers
 
     [Route("api/datastore")]
     [ApiController]
-    public class Controller : ControllerBase
+    public class TabDocumentoController : ControllerBase
     {
     
         private readonly DbDataStoreContext _dbContext;
 
-        public Controller(DbDataStoreContext _dbContext)
+        public TabDocumentoController(DbDataStoreContext _dbContext)
         {
             this._dbContext = _dbContext;
         }
 
-
-        [HttpGet("objetos-disponiveis")]
-        public IActionResult GetObjetosDisponiveis()
-        {
-            var tabObjeto = this._dbContext.Set<TabObjeto>();
- 
-            if(tabObjeto != null) 
-            {
-                return Ok(tabObjeto);
-            };
-
-            return NotFound();
-
-        }
-
-        [HttpGet("objetos-disponiveis/{cod}")]
-        public IActionResult GetObjetoDisponivel(int cod)
-        {
-            var tabObjeto = this._dbContext.tabObjeto.SingleOrDefault(t => t.codigoObjeto == cod);
-
-            if (tabObjeto != null)
-            {
-                return Ok(tabObjeto);
-            };
-
-            return NotFound();
-
-        }
 
         [HttpGet("solicitacao-realizada/{cod}")]
         public IActionResult GetSolicitacaoRealizada(int cod)
