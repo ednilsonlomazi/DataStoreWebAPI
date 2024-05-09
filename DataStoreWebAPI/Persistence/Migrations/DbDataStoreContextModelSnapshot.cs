@@ -78,6 +78,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
                 {
+                    b.Property<int>("codigoDocumento")
+                        .HasColumnType("int");
+
                     b.Property<int>("codigoItemDocumento")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -87,29 +90,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<int>("IdtabDocumento")
                         .HasColumnType("int");
 
-                    b.Property<int>("codigoDocumento")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tabObjetocodigoBancoDados")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tabObjetocodigoObjeto")
-                        .HasColumnType("int");
-
-                    b.Property<string>("tabObjetoserverName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("tabPermissaocodigoPermissao")
-                        .HasColumnType("int");
-
-                    b.HasKey("codigoItemDocumento");
+                    b.HasKey("codigoDocumento", "codigoItemDocumento");
 
                     b.HasIndex("IdtabDocumento");
-
-                    b.HasIndex("tabPermissaocodigoPermissao");
-
-                    b.HasIndex("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto");
 
                     b.ToTable("tabItemDocumento");
                 });
@@ -133,6 +116,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("TabItemDocumentocodigoDocumento")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TabItemDocumentocodigoItemDocumento")
+                        .HasColumnType("int");
+
                     b.Property<int>("codigoSchema")
                         .HasColumnType("int");
 
@@ -141,6 +130,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("serverName", "codigoBancoDados", "codigoObjeto");
+
+                    b.HasIndex("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
 
                     b.ToTable("tabObjeto");
                 });
@@ -153,6 +144,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoPermissao"));
 
+                    b.Property<int?>("TabItemDocumentocodigoDocumento")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TabItemDocumentocodigoItemDocumento")
+                        .HasColumnType("int");
+
                     b.Property<string>("classePermissao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -162,6 +159,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("codigoPermissao");
+
+                    b.HasIndex("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
 
                     b.ToTable("tabPermissao");
                 });
@@ -220,27 +219,32 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasForeignKey("IdtabDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.HasOne("DataStoreWebAPI.Entities.TabPermissao", "tabPermissao")
-                        .WithMany()
-                        .HasForeignKey("tabPermissaocodigoPermissao")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("DataStoreWebAPI.Entities.TabObjeto", b =>
+                {
+                    b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", null)
+                        .WithMany("objeto")
+                        .HasForeignKey("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
+                });
 
-                    b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "tabObjeto")
-                        .WithMany()
-                        .HasForeignKey("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("tabObjeto");
-
-                    b.Navigation("tabPermissao");
+            modelBuilder.Entity("DataStoreWebAPI.Entities.TabPermissao", b =>
+                {
+                    b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", null)
+                        .WithMany("permissao")
+                        .HasForeignKey("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>
                 {
                     b.Navigation("tabItemDocumento");
+                });
+
+            modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumento", b =>
+                {
+                    b.Navigation("objeto");
+
+                    b.Navigation("permissao");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabUsuario", b =>

@@ -24,9 +24,18 @@ namespace DataStoreWebAPI.Persistence
 
             modelBuilder.Entity<TabItemDocumento>(e => {
 
-                e.HasKey(tu => tu.codigoItemDocumento); 
+                e.HasKey(tid => new { tid.codigoDocumento, tid.codigoItemDocumento });
 
+                e.HasMany(tid => tid.objeto)
+                 .WithOne();
+
+                e.HasMany(tid => tid.permissao)
+                 .WithOne();                 
+
+                e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
             });
+
+           
 
             modelBuilder.Entity<TabDocumento>(e => {
 
