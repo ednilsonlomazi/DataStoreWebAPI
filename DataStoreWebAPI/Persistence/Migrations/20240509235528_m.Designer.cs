@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20240509002419_m16")]
-    partial class m16
+    [Migration("20240509235528_m")]
+    partial class m
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,6 +91,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoItemDocumento"));
 
                     b.Property<int>("IdtabDocumento")
+                        .HasColumnType("int");
+
+                    b.Property<int>("codigoObjeto")
+                        .HasColumnType("int");
+
+                    b.Property<int>("codigoPermissao")
                         .HasColumnType("int");
 
                     b.HasKey("codigoDocumento", "codigoItemDocumento");

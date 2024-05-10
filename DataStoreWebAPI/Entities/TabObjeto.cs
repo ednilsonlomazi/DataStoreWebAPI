@@ -3,6 +3,7 @@
     public class TabObjeto
     {
 
+        public int IdObjeto {get; set;}
         public int codigoBancoDados { get; set; }
         public int codigoObjeto { get; set; }
         public int codigoSchema { get; set; }

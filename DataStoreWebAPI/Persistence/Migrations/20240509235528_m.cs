@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m16 : Migration
+    public partial class m : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -52,7 +52,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     codigoDocumento = table.Column<int>(type: "int", nullable: false),
                     codigoItemDocumento = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdtabDocumento = table.Column<int>(type: "int", nullable: false)
+                    IdtabDocumento = table.Column<int>(type: "int", nullable: false),
+                    codigoObjeto = table.Column<int>(type: "int", nullable: false),
+                    codigoPermissao = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -22,15 +22,27 @@ namespace DataStoreWebAPI.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
+
+            modelBuilder.Entity<TabObjeto>(e => {
+
+                e.HasKey(to => new { to.serverName, to.codigoBancoDados, to.codigoObjeto });
+                e.Property(to => to.serverName).ValueGeneratedNever();
+                e.Property(to => to.codigoBancoDados).ValueGeneratedNever();
+                e.Property(to => to.codigoObjeto).ValueGeneratedNever();
+                e.Property(to => to.IdObjeto).ValueGeneratedOnAdd();
+
+
+            });
+
+            modelBuilder.Entity<TabPermissao>(e => {
+
+                e.HasKey(tp => tp.codigoPermissao);
+
+            });
+
             modelBuilder.Entity<TabItemDocumento>(e => {
 
-                e.HasKey(tid => new { tid.codigoDocumento, tid.codigoItemDocumento });
-
-                e.HasMany(tid => tid.objeto)
-                 .WithOne();
-
-                e.HasMany(tid => tid.permissao)
-                 .WithOne();                 
+                e.HasKey(tid => new { tid.codigoDocumento, tid.codigoItemDocumento });             
 
                 e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
             });
@@ -42,7 +54,7 @@ namespace DataStoreWebAPI.Persistence
                 e.HasKey(td => td.codigoDocumento); // 
                 e.HasMany(tid => tid.tabItemDocumento)
                  .WithOne()
-                 .HasForeignKey(tid => tid.IdtabDocumento); // a foreign key é a primary key da child tab quando (vazio)
+                 .HasForeignKey(tid => tid.codigoDocumento); // a foreign key é a primary key da child tab quando (vazio)
             });
 
 
@@ -84,21 +96,6 @@ namespace DataStoreWebAPI.Persistence
             // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
 
 
-            modelBuilder.Entity<TabObjeto>(e => {
-
-                e.HasKey(to => new { to.serverName, to.codigoBancoDados, to.codigoObjeto });
-                e.Property(to => to.serverName).ValueGeneratedNever();
-                e.Property(to => to.codigoBancoDados).ValueGeneratedNever();
-                e.Property(to => to.codigoObjeto).ValueGeneratedNever();
-
-
-            });
-
-            modelBuilder.Entity<TabPermissao>(e => {
-
-                e.HasKey(tp => tp.codigoPermissao);
-
-            });
 
 
 
