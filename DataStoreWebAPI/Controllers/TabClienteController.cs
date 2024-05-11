@@ -23,14 +23,14 @@ namespace DataStoreWebAPI.Controllers
 
 
         // retorna todos as solicitacoes de acesso do cliente
-        [HttpPut("cadastro-cliente")]
-        public IActionResult PutCadastroCliente(ClienteDto clienteDto)
+        [HttpPost("cadastro-cliente")]
+        public IActionResult PostCadastroCliente(ClienteDto clienteDto)
         {
-            var x = new TabCliente();
-            x.tabUsuario.nomeUsuario = clienteDto.nome;
-            x.tabUsuario.password = clienteDto.password;
-            x.tabUsuario.loginName = clienteDto.userName;
-            _dbContext.tabCliente.Add(x);
+            var NovoCliente = new TabCliente();
+            NovoCliente.tabUsuario.nomeUsuario = clienteDto.nome;
+            NovoCliente.tabUsuario.password = clienteDto.password;
+            NovoCliente.tabUsuario.loginName = clienteDto.userName;
+            _dbContext.tabCliente.Add(NovoCliente);
             _dbContext.SaveChanges();
             return Ok(clienteDto);
 
