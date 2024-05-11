@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m2 : Migration
+    public partial class m7 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,9 +39,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     IdObjeto = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     codigoSchema = table.Column<int>(type: "int", nullable: false),
-                    descricaoTipoObjeto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DatabaseName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ObjectName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    descricaoTipoObjeto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DatabaseName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ObjectName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -54,8 +54,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     codigoPermissao = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    descricaoPermissao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    classePermissao = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    descricaoPermissao = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    classePermissao = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -87,7 +87,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     objetoserverName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     objetocodigoBancoDados = table.Column<int>(type: "int", nullable: false),
                     objetocodigoObjeto = table.Column<int>(type: "int", nullable: false),
-                    codigoPermissao = table.Column<int>(type: "int", nullable: false)
+                    permissaocodigoPermissao = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -103,6 +103,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         columns: x => new { x.objetoserverName, x.objetocodigoBancoDados, x.objetocodigoObjeto },
                         principalTable: "tabObjeto",
                         principalColumns: new[] { "serverName", "codigoBancoDados", "codigoObjeto" },
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tabItemDocumento_tabPermissao_permissaocodigoPermissao",
+                        column: x => x.permissaocodigoPermissao,
+                        principalTable: "tabPermissao",
+                        principalColumn: "codigoPermissao",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -144,6 +150,11 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 name: "IX_tabItemDocumento_objetoserverName_objetocodigoBancoDados_objetocodigoObjeto",
                 table: "tabItemDocumento",
                 columns: new[] { "objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tabItemDocumento_permissaocodigoPermissao",
+                table: "tabItemDocumento",
+                column: "permissaocodigoPermissao");
         }
 
         /// <inheritdoc />
@@ -159,9 +170,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 name: "tabItemDocumento");
 
             migrationBuilder.DropTable(
-                name: "tabPermissao");
-
-            migrationBuilder.DropTable(
                 name: "tabUsuario");
 
             migrationBuilder.DropTable(
@@ -169,6 +177,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "tabObjeto");
+
+            migrationBuilder.DropTable(
+                name: "tabPermissao");
         }
     }
 }

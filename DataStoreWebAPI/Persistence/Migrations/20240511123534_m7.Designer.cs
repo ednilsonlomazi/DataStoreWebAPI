@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20240511011623_m2")]
-    partial class m2
+    [Migration("20240511123534_m7")]
+    partial class m7
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -87,9 +87,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoItemDocumento"));
 
-                    b.Property<int>("codigoPermissao")
-                        .HasColumnType("int");
-
                     b.Property<int>("objetocodigoBancoDados")
                         .HasColumnType("int");
 
@@ -100,7 +97,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("permissaocodigoPermissao")
+                        .HasColumnType("int");
+
                     b.HasKey("codigoDocumento", "codigoItemDocumento");
+
+                    b.HasIndex("permissaocodigoPermissao");
 
                     b.HasIndex("objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto");
 
@@ -119,7 +121,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DatabaseName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IdObjeto")
@@ -129,14 +130,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdObjeto"));
 
                     b.Property<string>("ObjectName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("codigoSchema")
                         .HasColumnType("int");
 
                     b.Property<string>("descricaoTipoObjeto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("serverName", "codigoBancoDados", "codigoObjeto");
@@ -153,11 +152,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoPermissao"));
 
                     b.Property<string>("classePermissao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("descricaoPermissao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("codigoPermissao");
@@ -220,6 +217,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DataStoreWebAPI.Entities.TabPermissao", "permissao")
+                        .WithMany()
+                        .HasForeignKey("permissaocodigoPermissao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "objeto")
                         .WithMany()
                         .HasForeignKey("objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto")
@@ -227,6 +230,8 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("objeto");
+
+                    b.Navigation("permissao");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>

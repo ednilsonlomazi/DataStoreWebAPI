@@ -118,7 +118,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("DatabaseName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("IdObjeto")
@@ -128,14 +127,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdObjeto"));
 
                     b.Property<string>("ObjectName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("codigoSchema")
                         .HasColumnType("int");
 
                     b.Property<string>("descricaoTipoObjeto")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("serverName", "codigoBancoDados", "codigoObjeto");
@@ -152,11 +149,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoPermissao"));
 
                     b.Property<string>("classePermissao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("descricaoPermissao")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("codigoPermissao");

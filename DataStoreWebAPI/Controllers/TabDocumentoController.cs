@@ -4,6 +4,7 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DataStoreWebAPI.Models;
 
 namespace DataStoreWebAPI.Controllers
 {
@@ -40,7 +41,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpPost("realizar-solicitacao")]
         public IActionResult PostRealizarSolicitacao(TabDocumento tabDocumentoInput)
         {
-            if(_dbContext.tabCliente.Where(tc => tabDocumentoInput.codigoCliente == tabDocumentoInput.codigoCliente).Single() != null)
+            if(_dbContext.tabCliente.Where(tc => tabDocumentoInput.codigoCliente == tabDocumentoInput.codigoCliente) != null)
             {
                 this._dbContext.tabDocumento.Add(tabDocumentoInput);
                 this._dbContext.SaveChanges();
@@ -50,16 +51,29 @@ namespace DataStoreWebAPI.Controllers
             
         }
 
-        [HttpPost("adicionar-item-solicitacao/{cod}")]
-        public IActionResult PostAdicionarItemSolicitacao(int cod, TabItemDocumento tabItemDocumentoInput)
+        [HttpPost("adicionar-item-solicitacao")]
+        public IActionResult PostAdicionarItemSolicitacao(ItemDocumentoDto dto)
         {
             
-            if (this._dbContext.tabDocumento.Where(t => t.codigoDocumento == cod).Single() != null) 
+            if (this._dbContext.tabDocumento.Where(t => t.codigoDocumento == dto.codigoDocumento).Single() != null) 
             {
-                this._dbContext.tabItemDocumento.Add(tabItemDocumentoInput);
+                var o = new TabObjeto();
+                o.codigoBancoDados = dto.codigoBancoDados;
+                o.codigoObjeto = dto.codigoObjeto;
+                o.serverName = dto.serverName;
+
+                var p = new TabPermissao();
+                p.codigoPermissao = dto.codigoPermissao;
+
+                var NovoItemDocumento = new TabItemDocumento();
+                NovoItemDocumento.objeto = o;
+                NovoItemDocumento.permissao = p;
+                NovoItemDocumento.codigoDocumento = dto.codigoDocumento; 
+                this._dbContext.Attach(NovoItemDocumento);
+                this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
                 this._dbContext.SaveChanges();
-                return Ok(tabItemDocumentoInput); 
-            };
+                return Ok(); 
+            }
 
             return NoContent();
         }

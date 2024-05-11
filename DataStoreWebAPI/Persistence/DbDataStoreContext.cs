@@ -38,6 +38,7 @@ namespace DataStoreWebAPI.Persistence
             modelBuilder.Entity<TabPermissao>(e => {
 
                 e.HasKey(tp => tp.codigoPermissao);
+                e.Property(tp => tp.codigoPermissao);
 
             });
 
