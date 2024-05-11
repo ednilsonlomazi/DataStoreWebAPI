@@ -3,7 +3,6 @@
     public class TabDocumento
     {
         public int codigoDocumento { get; set; }
-        public int codigoItemDocumento { get; set; }
         public int codigoCliente { get; set; }    
         public int codigoEmissor { get; set; } 
         public bool isOpen { get; set; }

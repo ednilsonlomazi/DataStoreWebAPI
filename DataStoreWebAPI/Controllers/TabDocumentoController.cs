@@ -40,26 +40,25 @@ namespace DataStoreWebAPI.Controllers
         [HttpPost("realizar-solicitacao")]
         public IActionResult PostRealizarSolicitacao(TabDocumento tabDocumentoInput)
         {
-            this._dbContext.tabDocumento.Add(tabDocumentoInput);
-
-            this._dbContext.SaveChanges();
-
-            return Ok(tabDocumentoInput);
+            if(_dbContext.tabCliente.Where(tc => tabDocumentoInput.codigoCliente == tabDocumentoInput.codigoCliente).Single() != null)
+            {
+                this._dbContext.tabDocumento.Add(tabDocumentoInput);
+                this._dbContext.SaveChanges();
+                return Ok(tabDocumentoInput);
+            }
+            return NotFound();
+            
         }
 
-        // adiciona item em uma solictacao existente
         [HttpPost("adicionar-item-solicitacao/{cod}")]
         public IActionResult PostAdicionarItemSolicitacao(int cod, TabItemDocumento tabItemDocumentoInput)
         {
-            tabItemDocumentoInput.codigoDocumento = cod;
-
-            var tabDocumento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == cod);
-
-            if (tabDocumento != null) 
+            
+            if (this._dbContext.tabDocumento.Where(t => t.codigoDocumento == cod).Single() != null) 
             {
                 this._dbContext.tabItemDocumento.Add(tabItemDocumentoInput);
                 this._dbContext.SaveChanges();
-                return Ok(tabItemDocumentoInput); //teste
+                return Ok(tabItemDocumentoInput); 
             };
 
             return NoContent();

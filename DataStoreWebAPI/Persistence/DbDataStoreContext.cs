@@ -1,5 +1,6 @@
 ﻿using DataStoreWebAPI.Entities;
 using Microsoft.EntityFrameworkCore;
+using DataStoreWebAPI.Models;
 
 namespace DataStoreWebAPI.Persistence
 {
@@ -55,6 +56,8 @@ namespace DataStoreWebAPI.Persistence
                 e.HasMany(tid => tid.tabItemDocumento)
                  .WithOne()
                  .HasForeignKey(tid => tid.codigoDocumento); // a foreign key é a primary key da child tab quando (vazio)
+            
+                            
             });
 
 
