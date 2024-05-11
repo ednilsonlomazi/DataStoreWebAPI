@@ -100,7 +100,11 @@ namespace DataStoreWebAPI.Persistence
 
             });
             // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
+            modelBuilder.Entity<TabAvaliacao>(e => {
 
+                e.HasKey(ta => ta.codigoAvaliacao);
+
+            });
 
 
 
