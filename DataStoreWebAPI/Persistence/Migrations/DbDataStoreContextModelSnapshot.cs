@@ -84,13 +84,24 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoItemDocumento"));
 
-                    b.Property<int>("IdObjeto")
+                    b.Property<int>("objetocodigoBancoDados")
                         .HasColumnType("int");
 
-                    b.Property<int>("codigoPermissao")
+                    b.Property<int>("objetocodigoObjeto")
+                        .HasColumnType("int");
+
+                    b.Property<string>("objetoserverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("permissaocodigoPermissao")
                         .HasColumnType("int");
 
                     b.HasKey("codigoDocumento", "codigoItemDocumento");
+
+                    b.HasIndex("permissaocodigoPermissao");
+
+                    b.HasIndex("objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto");
 
                     b.ToTable("tabItemDocumento");
                 });
@@ -207,6 +218,22 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasForeignKey("codigoDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("DataStoreWebAPI.Entities.TabPermissao", "permissao")
+                        .WithMany()
+                        .HasForeignKey("permissaocodigoPermissao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "objeto")
+                        .WithMany()
+                        .HasForeignKey("objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("objeto");
+
+                    b.Navigation("permissao");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>

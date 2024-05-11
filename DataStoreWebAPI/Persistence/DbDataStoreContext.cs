@@ -46,6 +46,8 @@ namespace DataStoreWebAPI.Persistence
                 e.HasKey(tid => new { tid.codigoDocumento, tid.codigoItemDocumento });             
 
                 e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
+
+                
             });
 
            
