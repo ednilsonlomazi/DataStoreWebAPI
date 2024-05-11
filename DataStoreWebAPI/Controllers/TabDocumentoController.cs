@@ -26,7 +26,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpGet("solicitacoes-cliente/{cod_cliente}")]
         public IActionResult GetSolicitacoesCliente(int cod_cliente)
         {
-            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.codigoCliente == cod_cliente).SingleOrDefault();
+            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.cliente.codigoCliente == cod_cliente).SingleOrDefault();
 
             if (tabDocumento != null)
             {
@@ -39,13 +39,19 @@ namespace DataStoreWebAPI.Controllers
 
         // cria uma solicitacao de acesso
         [HttpPost("realizar-solicitacao")]
-        public IActionResult PostRealizarSolicitacao(TabDocumento tabDocumentoInput)
+        public IActionResult PostRealizarSolicitacao(DocumentoDto dto)
         {
-            if(_dbContext.tabCliente.Where(tc => tabDocumentoInput.codigoCliente == tabDocumentoInput.codigoCliente) != null)
+            var vsf = this._dbContext.tabCliente.Where(tc => tc.codigoCliente == dto.codigoCliente).Single();
+            if(vsf != null)
             {
-                this._dbContext.tabDocumento.Add(tabDocumentoInput);
+                
+                var NovoDocumento = new TabDocumento();
+                NovoDocumento.cliente = vsf;
+
+                this._dbContext.tabDocumento.Attach(NovoDocumento);
+                this._dbContext.Entry(NovoDocumento).State = EntityState.Added;
                 this._dbContext.SaveChanges();
-                return Ok(tabDocumentoInput);
+                return Ok();
             }
             return NotFound();
             

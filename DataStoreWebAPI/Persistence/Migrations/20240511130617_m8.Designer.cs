@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20240511123534_m7")]
-    partial class m7
+    [Migration("20240511130617_m8")]
+    partial class m8
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,10 +43,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoDocumento"));
 
-                    b.Property<int>("codigoCliente")
-                        .HasColumnType("int");
-
-                    b.Property<int>("codigoEmissor")
+                    b.Property<int>("clientecodigoCliente")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("dataEmissao")
@@ -55,6 +52,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("emissorcodigoEmissor")
+                        .HasColumnType("int");
+
                     b.Property<bool>("isCanceled")
                         .HasColumnType("bit");
 
@@ -62,6 +62,10 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("codigoDocumento");
+
+                    b.HasIndex("clientecodigoCliente");
+
+                    b.HasIndex("emissorcodigoEmissor");
 
                     b.ToTable("tabDocumento");
                 });
@@ -196,6 +200,23 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("tabUsuario");
+                });
+
+            modelBuilder.Entity("DataStoreWebAPI.Entities.TabDocumento", b =>
+                {
+                    b.HasOne("DataStoreWebAPI.Entities.TabCliente", "cliente")
+                        .WithMany()
+                        .HasForeignKey("clientecodigoCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataStoreWebAPI.Entities.TabEmissor", "emissor")
+                        .WithMany()
+                        .HasForeignKey("emissorcodigoEmissor");
+
+                    b.Navigation("cliente");
+
+                    b.Navigation("emissor");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabEmissor", b =>

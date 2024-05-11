@@ -6,29 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m7 : Migration
+    public partial class m8 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "tabDocumento",
-                columns: table => new
-                {
-                    codigoDocumento = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    codigoCliente = table.Column<int>(type: "int", nullable: false),
-                    codigoEmissor = table.Column<int>(type: "int", nullable: false),
-                    isOpen = table.Column<bool>(type: "bit", nullable: false),
-                    isCanceled = table.Column<bool>(type: "bit", nullable: false),
-                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    dataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabDocumento", x => x.codigoDocumento);
-                });
-
             migrationBuilder.CreateTable(
                 name: "tabObjeto",
                 columns: table => new
@@ -78,6 +60,69 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "tabCliente",
+                columns: table => new
+                {
+                    codigoCliente = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabCliente", x => x.codigoCliente);
+                    table.ForeignKey(
+                        name: "FK_tabCliente_tabUsuario_codigoCliente",
+                        column: x => x.codigoCliente,
+                        principalTable: "tabUsuario",
+                        principalColumn: "codigoUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tabEmissors",
+                columns: table => new
+                {
+                    codigoEmissor = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabEmissors", x => x.codigoEmissor);
+                    table.ForeignKey(
+                        name: "FK_tabEmissors_tabUsuario_codigoEmissor",
+                        column: x => x.codigoEmissor,
+                        principalTable: "tabUsuario",
+                        principalColumn: "codigoUsuario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tabDocumento",
+                columns: table => new
+                {
+                    codigoDocumento = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    clientecodigoCliente = table.Column<int>(type: "int", nullable: false),
+                    emissorcodigoEmissor = table.Column<int>(type: "int", nullable: true),
+                    isOpen = table.Column<bool>(type: "bit", nullable: false),
+                    isCanceled = table.Column<bool>(type: "bit", nullable: false),
+                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    dataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabDocumento", x => x.codigoDocumento);
+                    table.ForeignKey(
+                        name: "FK_tabDocumento_tabCliente_clientecodigoCliente",
+                        column: x => x.clientecodigoCliente,
+                        principalTable: "tabCliente",
+                        principalColumn: "codigoCliente",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tabDocumento_tabEmissors_emissorcodigoEmissor",
+                        column: x => x.emissorcodigoEmissor,
+                        principalTable: "tabEmissors",
+                        principalColumn: "codigoEmissor");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "tabItemDocumento",
                 columns: table => new
                 {
@@ -112,39 +157,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "tabCliente",
-                columns: table => new
-                {
-                    codigoCliente = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabCliente", x => x.codigoCliente);
-                    table.ForeignKey(
-                        name: "FK_tabCliente_tabUsuario_codigoCliente",
-                        column: x => x.codigoCliente,
-                        principalTable: "tabUsuario",
-                        principalColumn: "codigoUsuario",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_tabDocumento_clientecodigoCliente",
+                table: "tabDocumento",
+                column: "clientecodigoCliente");
 
-            migrationBuilder.CreateTable(
-                name: "tabEmissors",
-                columns: table => new
-                {
-                    codigoEmissor = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabEmissors", x => x.codigoEmissor);
-                    table.ForeignKey(
-                        name: "FK_tabEmissors_tabUsuario_codigoEmissor",
-                        column: x => x.codigoEmissor,
-                        principalTable: "tabUsuario",
-                        principalColumn: "codigoUsuario",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.CreateIndex(
+                name: "IX_tabDocumento_emissorcodigoEmissor",
+                table: "tabDocumento",
+                column: "emissorcodigoEmissor");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tabItemDocumento_objetoserverName_objetocodigoBancoDados_objetocodigoObjeto",
@@ -161,16 +182,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "tabCliente");
-
-            migrationBuilder.DropTable(
-                name: "tabEmissors");
-
-            migrationBuilder.DropTable(
                 name: "tabItemDocumento");
-
-            migrationBuilder.DropTable(
-                name: "tabUsuario");
 
             migrationBuilder.DropTable(
                 name: "tabDocumento");
@@ -180,6 +192,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "tabPermissao");
+
+            migrationBuilder.DropTable(
+                name: "tabCliente");
+
+            migrationBuilder.DropTable(
+                name: "tabEmissors");
+
+            migrationBuilder.DropTable(
+                name: "tabUsuario");
         }
     }
 }

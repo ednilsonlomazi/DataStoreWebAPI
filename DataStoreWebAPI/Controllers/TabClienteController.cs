@@ -32,6 +32,7 @@ namespace DataStoreWebAPI.Controllers
             NovoCliente.tabUsuario.loginName = clienteDto.userName;
             _dbContext.tabCliente.Add(NovoCliente);
             _dbContext.SaveChanges();
+            this._dbContext.Entry(NovoCliente).State = EntityState.Detached;
             return Ok(clienteDto);
 
         }

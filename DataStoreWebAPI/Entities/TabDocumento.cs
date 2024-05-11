@@ -1,10 +1,12 @@
-﻿namespace DataStoreWebAPI.Entities
+﻿using DataStoreWebAPI.Models;
+
+namespace DataStoreWebAPI.Entities
 {
     public class TabDocumento
     {
         public int codigoDocumento { get; set; }
-        public int codigoCliente { get; set; }    
-        public int codigoEmissor { get; set; } 
+        public TabCliente cliente { get; set; }    
+        public TabEmissor? emissor { get; set; } 
         public bool isOpen { get; set; }
         public bool isCanceled { get; set; }
         public DateTime dataSolicitacao { get; set; }
@@ -18,6 +20,7 @@
             this.isOpen = true;
             this.isCanceled = false;
             this.tabItemDocumento = new List<TabItemDocumento>();
+            this.cliente = new TabCliente(); 
 
         }
 
