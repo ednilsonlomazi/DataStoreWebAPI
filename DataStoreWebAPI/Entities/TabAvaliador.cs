@@ -1,11 +1,11 @@
 ﻿namespace DataStoreWebAPI.Entities
 {
-    public class TabEmissor 
+    public class TabAvaliador 
     {
         public TabUsuario tabUsuario { get; set; } // one-to-one relationship wiht tab_usuario
-        public int codigoEmissor { set; get; }
+        public int codigoAvaliador { set; get; }
 
-        public TabEmissor()
+        public TabAvaliador()
         {
             this.tabUsuario = new TabUsuario();
         }

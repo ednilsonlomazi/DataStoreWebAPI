@@ -1,6 +1,6 @@
 namespace DataStoreWebAPI.Models {
     
-    public class EmissorDto
+    public class AvaliadorDto
     {
         public string nome {get; set;}
         public string userName {get; set;}

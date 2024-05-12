@@ -6,7 +6,7 @@ namespace DataStoreWebAPI.Entities
     {
         public int codigoDocumento { get; set; }
         public TabCliente cliente { get; set; }    
-        public TabEmissor? emissor { get; set; } 
+        public TabAvaliador? avaliador { get; set; } 
         public bool isOpen { get; set; }
         public bool isCanceled { get; set; }
         public DateTime dataSolicitacao { get; set; }

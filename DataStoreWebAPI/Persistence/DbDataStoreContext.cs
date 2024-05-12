@@ -15,7 +15,7 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabItemDocumento> tabItemDocumento { get; set; }
         public DbSet<TabUsuario> tabUsuario { get; set; }
         public DbSet<TabCliente> tabCliente { get; set; }
-        public DbSet<TabEmissor> tabEmissors { get; set; }
+        public DbSet<TabAvaliador> tabAvaliador { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
         public DbSet<TabAvaliacao> tabAvaliacao { get; set; }        
@@ -72,9 +72,9 @@ namespace DataStoreWebAPI.Persistence
 
             });
 
-            modelBuilder.Entity<TabEmissor>(e => {
+            modelBuilder.Entity<TabAvaliador>(e => {
 
-                e.HasKey(tu => tu.codigoEmissor);
+                e.HasKey(tu => tu.codigoAvaliador);
 
             });
 
@@ -95,9 +95,9 @@ namespace DataStoreWebAPI.Persistence
 
             modelBuilder.Entity<TabUsuario>(e => {
 
-                e.HasOne(tu => tu.tabEmissor)
+                e.HasOne(tu => tu.tabAvaliador)
                  .WithOne(tu => tu.tabUsuario)
-                 .HasForeignKey<TabEmissor>();
+                 .HasForeignKey<TabAvaliador>();
 
             });
             // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //

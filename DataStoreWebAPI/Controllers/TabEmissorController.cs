@@ -24,13 +24,13 @@ namespace DataStoreWebAPI.Controllers
 
         // retorna todos as solicitacoes de acesso do cliente
         [HttpPost("cadastro-emissor")]
-        public IActionResult PostCadastroEmissor(EmissorDto dto)
+        public IActionResult PostCadastroEmissor(AvaliadorDto dto)
         {
-            var NovoEmissor = new TabEmissor();
+            var NovoEmissor = new TabAvaliador();
             NovoEmissor.tabUsuario.nomeUsuario = dto.nome;
             NovoEmissor.tabUsuario.password = dto.password;
             NovoEmissor.tabUsuario.loginName = dto.userName;
-            _dbContext.tabEmissors.Add(NovoEmissor);
+            _dbContext.tabAvaliador.Add(NovoEmissor);
             _dbContext.SaveChanges();
             return Ok(dto);
 

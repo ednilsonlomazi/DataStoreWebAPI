@@ -2,6 +2,7 @@ namespace DataStoreWebAPI.Models {
     
     public class AvaliacaoDto
     {
+        public int codigoAvaliador {get; set;}
         public int codigoDocumento {get; set;}
         public int codigoItemDocumento {get; set;}
         public bool resultado {get; set;}
