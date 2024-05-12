@@ -18,6 +18,7 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabEmissor> tabEmissors { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
+        public DbSet<TabAvaliacao> tabAvaliacao { get; set; }        
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -38,8 +38,8 @@ namespace DataStoreWebAPI.Controllers
         }
 
         // iniciar uma avaliacao
-        [HttpGet("iniciar-avaliacao/{cod_documento}/{cod_avaliador}")]
-        public IActionResult GetDocumentosParaAvaliar(int cod_documento, int cod_avaliador)
+        [HttpPut("iniciar-avaliacao/{cod_documento}/{cod_avaliador}")]
+        public IActionResult PutIniciaAvaliacao(int cod_documento, int cod_avaliador)
         {
             var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
                                                                    && td.isOpen 
@@ -63,6 +63,43 @@ namespace DataStoreWebAPI.Controllers
             }
             return NotFound();
         }        
+
+        // iniciar uma avaliacao
+        [HttpPut("avaliar-item")]
+        public IActionResult PutAvaliarItem(AvaliacaoDto dto)
+        {
+            var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
+                                                                   && td.isOpen 
+                                                                   && td.emissor != null
+                                                                   && td.codigoDocumento == dto.codigoDocumento
+                                                                ).Single();
+            if(documento != null)
+            {
+                var item = this._dbContext.tabItemDocumento.Where(tid => tid.codigoItemDocumento == dto.codigoItemDocumento 
+                                                                      && tid.codigoDocumento == dto.codigoDocumento
+                                                                      && tid.avaliacao == null).Single();
+                if(item != null)
+                {
+                    // payload da avaliacao
+                    var NovaAvaliacao = new TabAvaliacao();
+                    NovaAvaliacao.resultado = dto.resultado;
+                    NovaAvaliacao.justificativa = dto.justificativa;
+                    this._dbContext.tabAvaliacao.Add(NovaAvaliacao);
+
+                    item.avaliacao = NovaAvaliacao;
+
+
+                    this._dbContext.tabItemDocumento.Update(item);
+                    this._dbContext.SaveChanges();
+                    return Ok();
+
+                }
+                return NotFound();
+                
+                
+            }
+            return NotFound();
+        }                
 
 
     }
