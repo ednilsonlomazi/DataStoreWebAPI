@@ -1,5 +1,9 @@
+using DataStoreWebAPI.Entities;
 using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using DataStoreWebAPI.Identity.Data; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +20,19 @@ var builder = WebApplication.CreateBuilder(args);
 // coletando a string de conexao
 var connectionString = builder.Configuration.GetConnectionString("NodeHunter");
 builder.Services.AddDbContext<DbDataStoreContext>(s => s.UseSqlServer(connectionString));
+builder.Services.AddDbContext<IdentityDataContext>(s => s.UseSqlServer(connectionString));
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataContext>();
 
-// -------------------------------------------------------------------------
+// --------------------Configuracao do sistema de login -----------------------------------------------------
+/*
+builder.Services.AddDbContext<DbDataStoreContext>(
+    options => options.UseInMemoryDatabase("AppDb"));
+
+
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<TabUsuario>()
+    .AddEntityFrameworkStores<DbDataStoreContext>();
+*/
 
 
 builder.Services.AddControllers();
@@ -36,6 +51,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

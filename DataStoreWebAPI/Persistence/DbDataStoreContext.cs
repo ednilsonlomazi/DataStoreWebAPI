@@ -1,11 +1,13 @@
 ﻿using DataStoreWebAPI.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DataStoreWebAPI.Models;
 
 namespace DataStoreWebAPI.Persistence
 {
-    public class DbDataStoreContext : DbContext
+    public class DbDataStoreContext : IdentityDbContext
     {
+
         public DbDataStoreContext(DbContextOptions<DbDataStoreContext> options) : base(options) 
         {
             
