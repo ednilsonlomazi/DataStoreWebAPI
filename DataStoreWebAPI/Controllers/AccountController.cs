@@ -14,35 +14,40 @@ namespace DataStoreWebAPI.Controllers
 
     [Route("api/Account/Controller")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : Controller
     {
     
-        private readonly IdentityDataContext _dbContext;
+         
         private readonly UserManager<IdentityUser> userManager;
         private readonly SignInManager<IdentityUser> signInManager;
 
-        public AccountController(IdentityDataContext _dbContext)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
         {
-            this._dbContext = _dbContext;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
+            
         }
 
 
         // retorna todos as solicitacoes de acesso do cliente
         [HttpPost("account-registro")]
+ 
         public async Task<IActionResult> PostAccountRegistro(IdentityRegistroDto dto)
         {
             if(1==1)
             {
-                var NovoUser = new IdentityUser
-                {
-                    UserName = dto.email,
-                    Email = dto.email,
-                    EmailConfirmed = true,
-                    PhoneNumberConfirmed = true,
-                    TwoFactorEnabled = false,
-                    LockoutEnabled = true,
-                    AccessFailedCount = 1
-                };
+
+                var NovoUser = new IdentityUser();
+
+                
+                    NovoUser.UserName = dto.email;
+                    NovoUser.Email = dto.email;
+                    NovoUser.EmailConfirmed = true;
+                    NovoUser.PhoneNumberConfirmed = true;
+                    NovoUser.TwoFactorEnabled = false;
+                    NovoUser.LockoutEnabled = true;
+                    NovoUser.AccessFailedCount = 1;
+                
 
                 var result = await userManager.CreateAsync(NovoUser, dto.password);
 
