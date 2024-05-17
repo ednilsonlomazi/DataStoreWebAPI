@@ -48,30 +48,22 @@ namespace DataStoreWebAPI.Controllers
                     AccessFailedCount = 1
                 };
 
-
                 var result = await userManager.CreateAsync(NovoUser, dto.password);
-                var passwordValidator = new PasswordValidator<IdentityUser>();
-                var result_pass_validation = await passwordValidator.ValidateAsync(userManager, null, dto.password);
-                if(result_pass_validation.Succeeded)
+                
+                if(result.Succeeded)
                 {
-                    if(result.Succeeded)
-                    {
-                        await signInManager.SignInAsync(NovoUser, isPersistent: false);
-                        return Ok(dto);
-                    }
-                    return BadRequest("Um erro inesperado ocorreu.");
-                }
-                return BadRequest("Senha não corresponde com os padrões de segurança estabelecidos. Use uma senha mais forte.");
+                    await signInManager.SignInAsync(NovoUser, isPersistent: false);
+                    return Ok(dto);
+                }                
 
-
+                var erros_senha = new List<string>();
                 foreach (var erro in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, erro.Description);
+                    erros_senha.Add(erro.Description);
                 }
-                ModelState.AddModelError(string.Empty, "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-                return BadRequest("Senha Fraca");
+                return BadRequest(erros_senha);
             }
-            return Ok(dto);
+            return BadRequest();
             
 
         }  
