@@ -34,20 +34,20 @@ namespace DataStoreWebAPI.Controllers
  
         public async Task<IActionResult> PostAccountRegistro(IdentityRegistroDto dto)
         {
-            if(1==1)
+            if(ModelState.IsValid)
             {
 
-                var NovoUser = new IdentityUser();
+                var NovoUser = new IdentityUser
+                {
+                    UserName = dto.email,
+                    Email = dto.email,
+                    EmailConfirmed = true,
+                    PhoneNumberConfirmed = true,
+                    TwoFactorEnabled = false,
+                    LockoutEnabled = true,
+                    AccessFailedCount = 1
+                };
 
-                
-                    NovoUser.UserName = dto.email;
-                    NovoUser.Email = dto.email;
-                    NovoUser.EmailConfirmed = true;
-                    NovoUser.PhoneNumberConfirmed = true;
-                    NovoUser.TwoFactorEnabled = false;
-                    NovoUser.LockoutEnabled = true;
-                    NovoUser.AccessFailedCount = 1;
-                
 
                 var result = await userManager.CreateAsync(NovoUser, dto.password);
 

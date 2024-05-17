@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DataStoreWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DataStoreWebAPI.Controllers
 {
 
     [Route("api/datastore")]
     [ApiController]
+    //[Authorize] // em conjunto com o framework identity libera acesso ao controlador apenas a usuarios logados
     public class TabClienteController : ControllerBase
     {
     

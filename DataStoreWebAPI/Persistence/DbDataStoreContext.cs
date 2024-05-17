@@ -5,7 +5,7 @@ using DataStoreWebAPI.Models;
 
 namespace DataStoreWebAPI.Persistence
 {
-    public class DbDataStoreContext : IdentityDbContext
+    public class DbDataStoreContext : DbContext
     {
 
         public DbDataStoreContext(DbContextOptions<DbDataStoreContext> options) : base(options) 
