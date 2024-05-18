@@ -41,6 +41,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// configurando as opcoes nos cookies de login
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(option => 
     {
@@ -48,6 +49,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         option.ExpireTimeSpan = TimeSpan.FromMinutes(10);
         option.SlidingExpiration = true; // emite novo cookie quando mais de 10/2 minutos tiver sido transcorrido
     });
+
+// configurando a complexidade da senha de login
+builder.Services.Configure<IdentityOptions>(option => {
+    option.Password.RequiredLength = 5;
+    option.Password.RequireNonAlphanumeric = false; 
+});
 
 var app = builder.Build();
 
