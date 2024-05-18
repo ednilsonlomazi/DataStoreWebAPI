@@ -141,21 +141,14 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<int>("tabItemDocumentocodigoItemDocumento")
                         .HasColumnType("int");
 
-                    b.Property<int>("tabObjetocodigoBancoDados")
+                    b.Property<int>("tabObjetoIdObjeto")
                         .HasColumnType("int");
-
-                    b.Property<int>("tabObjetocodigoObjeto")
-                        .HasColumnType("int");
-
-                    b.Property<string>("tabObjetoserverName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("tabItemDocumentocodigoDocumento", "tabItemDocumentocodigoItemDocumento");
+                    b.HasIndex("tabObjetoIdObjeto");
 
-                    b.HasIndex("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto");
+                    b.HasIndex("tabItemDocumentocodigoDocumento", "tabItemDocumentocodigoItemDocumento");
 
                     b.ToTable("tabItemDocumentoObjeto");
                 });
@@ -188,8 +181,17 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabObjeto", b =>
                 {
-                    b.Property<string>("serverName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("IdObjeto")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdObjeto"));
+
+                    b.Property<string>("DatabaseName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ObjectName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("codigoBancoDados")
                         .HasColumnType("int");
@@ -197,25 +199,20 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<int>("codigoObjeto")
                         .HasColumnType("int");
 
-                    b.Property<string>("DatabaseName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("IdObjeto")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdObjeto"));
-
-                    b.Property<string>("ObjectName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("codigoSchema")
                         .HasColumnType("int");
 
                     b.Property<string>("descricaoTipoObjeto")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("serverName", "codigoBancoDados", "codigoObjeto");
+                    b.Property<string>("serverName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("IdObjeto");
+
+                    b.HasIndex("serverName", "codigoBancoDados", "codigoObjeto")
+                        .IsUnique();
 
                     b.ToTable("tabObjeto");
                 });
@@ -517,15 +514,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabItemDocumentoObjeto", b =>
                 {
-                    b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", "tabItemDocumento")
-                        .WithMany("objeto")
-                        .HasForeignKey("tabItemDocumentocodigoDocumento", "tabItemDocumentocodigoItemDocumento")
+                    b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "tabObjeto")
+                        .WithMany()
+                        .HasForeignKey("tabObjetoIdObjeto")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataStoreWebAPI.Entities.TabObjeto", "tabObjeto")
-                        .WithMany()
-                        .HasForeignKey("tabObjetoserverName", "tabObjetocodigoBancoDados", "tabObjetocodigoObjeto")
+                    b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", "tabItemDocumento")
+                        .WithMany("objeto")
+                        .HasForeignKey("tabItemDocumentocodigoDocumento", "tabItemDocumentocodigoItemDocumento")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

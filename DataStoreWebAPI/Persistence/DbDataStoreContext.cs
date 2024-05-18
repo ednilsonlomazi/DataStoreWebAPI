@@ -34,7 +34,8 @@ namespace DataStoreWebAPI.Persistence
             // ----------------------------------------------------------------------------------------------
             modelBuilder.Entity<TabObjeto>(e => {
 
-                e.HasKey(to => new { to.serverName, to.codigoBancoDados, to.codigoObjeto });
+                e.HasKey(to => to.IdObjeto); // id universal de todos os servers, bancos e objetos
+                e.HasIndex(to => new {to.serverName, to.codigoBancoDados, to.codigoObjeto}).IsUnique();
                 e.Property(to => to.serverName).ValueGeneratedNever();
                 e.Property(to => to.codigoBancoDados).ValueGeneratedNever();
                 e.Property(to => to.codigoObjeto).ValueGeneratedNever();
