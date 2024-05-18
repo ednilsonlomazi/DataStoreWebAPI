@@ -87,7 +87,8 @@ namespace DataStoreWebAPI.Controllers
                                                                 
             if(documento != null)
             {
-                if(documento.avaliador.Email == dto.email_avaliador)
+                var avaliador = this._dbContext.Users.Where(tu => tu.Email == dto.email_avaliador).Single();
+                if(avaliador != null)
                 {
                     var item = this._dbContext.tabItemDocumento.Where(tid => tid.codigoItemDocumento == dto.codigoItemDocumento 
                                                                       && tid.codigoDocumento == dto.codigoDocumento

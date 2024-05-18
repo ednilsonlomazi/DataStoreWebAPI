@@ -54,6 +54,8 @@ namespace DataStoreWebAPI.Persistence
 
                 e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
 
+                //e.HasIndex(tid => new {tid.codigoDocumento, tid.codigoItemDocumento, tid.objeto, tid.permissao}).IsUnique();
+
                 
             });
 
