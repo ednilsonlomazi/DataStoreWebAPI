@@ -69,20 +69,37 @@ namespace DataStoreWebAPI.Controllers
             
             if (documento != null && documento.isOpen) 
             {
-                var o = new TabObjeto();
-                o.codigoBancoDados = dto.codigoBancoDados;
-                o.codigoObjeto = dto.codigoObjeto;
-                o.serverName = dto.serverName;
+                // ----------- endpoints ------------ //
+                var obj = new TabObjeto();
+                obj.codigoBancoDados = dto.codigoBancoDados;
+                obj.codigoObjeto = dto.codigoObjeto;
+                obj.serverName = dto.serverName;
 
                 var p = new TabPermissao();
                 p.codigoPermissao = dto.codigoPermissao;
+                // ---------------------------------- //
 
                 var NovoItemDocumento = new TabItemDocumento();
-                //NovoItemDocumento.objeto = o;
-                //NovoItemDocumento.permissao = p; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111111
-                NovoItemDocumento.codigoDocumento = dto.codigoDocumento; 
+
+                // ---------- tabelas de juncao ---------- //
+                var joinTableObj = new TabItemDocumentoObjeto();
+                joinTableObj.tabObjeto = obj;
+                joinTableObj.tabItemDocumento = NovoItemDocumento;
+
+                var joinTablePermissao = new TabItemDocumentoPermissao();
+                joinTablePermissao.tabPermissao = p;
+                joinTablePermissao.tabItemDocumento = NovoItemDocumento;                
+                // ------------------------------------------------- //
+
                 this._dbContext.Attach(NovoItemDocumento);
                 this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
+
+                this._dbContext.Attach(joinTableObj);
+                this._dbContext.Entry(joinTableObj).State = EntityState.Added;
+
+                this._dbContext.Attach(joinTablePermissao);
+                this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;
+
                 this._dbContext.SaveChanges();
                 return Ok(); 
             }
