@@ -3,7 +3,8 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using DataStoreWebAPI.Identity.Data; 
+using DataStoreWebAPI.Identity.Data;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,14 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(option => 
+    {
+        option.Cookie.Name = "DataStoreWebApiLoginCookie";
+        option.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+        option.SlidingExpiration = true; // emite novo cookie quando mais de 10/2 minutos tiver sido transcorrido
+    });
 
 var app = builder.Build();
 
