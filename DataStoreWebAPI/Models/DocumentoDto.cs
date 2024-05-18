@@ -3,7 +3,7 @@ namespace DataStoreWebAPI.Models {
     public class DocumentoDto
     {
        
-        public int codigoCliente {get; set;}
+        public string email_cliente {get; set;}
         
     }
 

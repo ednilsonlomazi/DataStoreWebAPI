@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataStoreWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using DataStoreWebAPI.Identity.Data;
+ 
 
 namespace DataStoreWebAPI.Controllers
 {
@@ -47,6 +47,7 @@ namespace DataStoreWebAPI.Controllers
                     LockoutEnabled = true,
                     AccessFailedCount = 1
                 };
+                
 
                 var result = await userManager.CreateAsync(NovoUser, dto.password);
                 

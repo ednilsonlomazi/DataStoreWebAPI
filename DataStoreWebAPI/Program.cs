@@ -3,7 +3,7 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using DataStoreWebAPI.Identity.Data;
+ 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using DataStoreWebAPI.Services;
 
@@ -22,9 +22,11 @@ var builder = WebApplication.CreateBuilder(args);
 // coletando a string de conexao
 var connectionString = builder.Configuration.GetConnectionString("NodeHunter");
 builder.Services.AddDbContext<DbDataStoreContext>(s => s.UseSqlServer(connectionString));
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DbDataStoreContext>();
+/* quando tinha dois contextos isso era necessario
 builder.Services.AddDbContext<IdentityDataContext>(s => s.UseSqlServer(connectionString));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataContext>();
-
+*/
 // --------------------Configuracao do sistema de login -----------------------------------------------------
 /*
 builder.Services.AddDbContext<DbDataStoreContext>(

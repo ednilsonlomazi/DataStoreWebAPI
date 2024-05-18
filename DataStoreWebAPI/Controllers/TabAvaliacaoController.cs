@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using DataStoreWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+ 
 
 namespace DataStoreWebAPI.Controllers
 {
@@ -17,15 +18,17 @@ namespace DataStoreWebAPI.Controllers
 
     [Route("api/datastore")]
     [ApiController]
-    [Authorize] // em conjunto com o framework identity libera acesso ao controlador apenas a usuarios logados
+    [Authorize(Roles = "Admin, Gerente")] // em conjunto com o framework identity libera acesso ao controlador apenas a usuarios logados
     public class TabAvaliacaoController : ControllerBase
     {
     
         private readonly DbDataStoreContext _dbContext;
+        
 
         public TabAvaliacaoController(DbDataStoreContext _dbContext)
         {
             this._dbContext = _dbContext;
+             
         }
 
 
@@ -45,8 +48,8 @@ namespace DataStoreWebAPI.Controllers
         }
 
         // iniciar uma avaliacao
-        [HttpPut("iniciar-avaliacao/{cod_documento}/{cod_avaliador}")]
-        public IActionResult PutIniciaAvaliacao(int cod_documento, int cod_avaliador)
+        [HttpPut("iniciar-avaliacao/{cod_documento}/{email_avaliador}")]
+        public IActionResult PutIniciaAvaliacao(int cod_documento, string email_avaliador)
         {
             var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
                                                                    && td.isOpen 
@@ -55,7 +58,7 @@ namespace DataStoreWebAPI.Controllers
                                                                 ).Single();
             if(documento != null)
             {
-                var avaliador = this._dbContext.tabAvaliador.Where(te => te.codigoAvaliador == cod_avaliador).Single();
+                var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).Single();
                 if(avaliador != null)
                 {
                     documento.avaliador = avaliador;
@@ -84,7 +87,7 @@ namespace DataStoreWebAPI.Controllers
                                                                 
             if(documento != null)
             {
-                if(documento.avaliador.codigoAvaliador == dto.codigoAvaliador)
+                if(documento.avaliador.Email == dto.email_avaliador)
                 {
                     var item = this._dbContext.tabItemDocumento.Where(tid => tid.codigoItemDocumento == dto.codigoItemDocumento 
                                                                       && tid.codigoDocumento == dto.codigoDocumento

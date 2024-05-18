@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataStoreWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
+ 
 
 namespace DataStoreWebAPI.Controllers
 {
@@ -17,18 +18,19 @@ namespace DataStoreWebAPI.Controllers
     {
     
         private readonly DbDataStoreContext _dbContext;
-
+         
         public TabDocumentoController(DbDataStoreContext _dbContext)
         {
             this._dbContext = _dbContext;
+             
         }
 
 
         // retorna todos as solicitacoes de acesso do cliente
-        [HttpGet("solicitacoes-cliente/{cod_cliente}")]
-        public IActionResult GetSolicitacoesCliente(int cod_cliente)
+        [HttpGet("solicitacoes-cliente/{email_cliente}")]
+        public IActionResult GetSolicitacoesCliente(string email_cliente)
         {
-            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.cliente.codigoCliente == cod_cliente).SingleOrDefault();
+            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.cliente.Email == email_cliente).SingleOrDefault();
 
             if (tabDocumento != null)
             {
@@ -43,12 +45,13 @@ namespace DataStoreWebAPI.Controllers
         [HttpPost("realizar-solicitacao")]
         public IActionResult PostRealizarSolicitacao(DocumentoDto dto)
         {
-            var vsf = this._dbContext.tabCliente.Where(tc => tc.codigoCliente == dto.codigoCliente).Single();
-            if(vsf != null)
+            // o dbset do identityuser eh public virtual IDbSet<TUser> Users { get; set; }
+            var cliente = this._dbContext.Users.Where(tu => tu.Email == dto.email_cliente).Single();
+            if(cliente != null)
             {
                 
                 var NovoDocumento = new TabDocumento();
-                NovoDocumento.cliente = vsf;
+                NovoDocumento.cliente = cliente;
 
                 this._dbContext.tabDocumento.Attach(NovoDocumento);
                 this._dbContext.Entry(NovoDocumento).State = EntityState.Added;

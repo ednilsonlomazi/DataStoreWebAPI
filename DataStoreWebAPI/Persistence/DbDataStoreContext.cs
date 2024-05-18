@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DataStoreWebAPI.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace DataStoreWebAPI.Persistence
 {
-    public class DbDataStoreContext : DbContext
+    public class DbDataStoreContext : IdentityDbContext
     {
 
         public DbDataStoreContext(DbContextOptions<DbDataStoreContext> options) : base(options) 
@@ -25,8 +26,10 @@ namespace DataStoreWebAPI.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
-
+            // Linha que chaama os modelos definidos do identity, uma vez que a classe base eh o contexto do Identity. 
+            // --
+            base.OnModelCreating(modelBuilder);
+            // ----------------------------------------------------------------------------------------------
             modelBuilder.Entity<TabObjeto>(e => {
 
                 e.HasKey(to => new { to.serverName, to.codigoBancoDados, to.codigoObjeto });
