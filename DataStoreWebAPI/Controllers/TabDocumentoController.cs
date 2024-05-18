@@ -69,6 +69,8 @@ namespace DataStoreWebAPI.Controllers
             
             if (documento != null && documento.isOpen) 
             {
+                
+
                 // ----------- endpoints ------------ //
                 var obj = new TabObjeto();
                 obj.codigoBancoDados = dto.codigoBancoDados;
@@ -80,6 +82,7 @@ namespace DataStoreWebAPI.Controllers
                 // ---------------------------------- //
 
                 var NovoItemDocumento = new TabItemDocumento();
+                NovoItemDocumento.codigoDocumento = dto.codigoDocumento;
 
                 // ---------- tabelas de juncao ---------- //
                 var joinTableObj = new TabItemDocumentoObjeto();
