@@ -78,8 +78,8 @@ namespace DataStoreWebAPI.Controllers
                 p.codigoPermissao = dto.codigoPermissao;
 
                 var NovoItemDocumento = new TabItemDocumento();
-                NovoItemDocumento.objeto = o;
-                NovoItemDocumento.permissao = p;
+                //NovoItemDocumento.objeto = o;
+                //NovoItemDocumento.permissao = p; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111111
                 NovoItemDocumento.codigoDocumento = dto.codigoDocumento; 
                 this._dbContext.Attach(NovoItemDocumento);
                 this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;

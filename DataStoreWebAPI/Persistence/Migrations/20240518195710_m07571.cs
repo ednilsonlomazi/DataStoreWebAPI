@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m00 : Migration
+    public partial class m07571 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,40 +48,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tabAvaliacao",
-                columns: table => new
-                {
-                    codigoAvaliacao = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    resultado = table.Column<bool>(type: "bit", nullable: false),
-                    justificativa = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    dtaAvaliacao = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabAvaliacao", x => x.codigoAvaliacao);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tabObjeto",
-                columns: table => new
-                {
-                    codigoBancoDados = table.Column<int>(type: "int", nullable: false),
-                    codigoObjeto = table.Column<int>(type: "int", nullable: false),
-                    serverName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    IdObjeto = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    codigoSchema = table.Column<int>(type: "int", nullable: false),
-                    descricaoTipoObjeto = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DatabaseName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ObjectName = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tabObjeto", x => new { x.serverName, x.codigoBancoDados, x.codigoObjeto });
                 });
 
             migrationBuilder.CreateTable(
@@ -288,38 +254,94 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     codigoDocumento = table.Column<int>(type: "int", nullable: false),
                     codigoItemDocumento = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    objetoserverName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    objetocodigoBancoDados = table.Column<int>(type: "int", nullable: false),
-                    objetocodigoObjeto = table.Column<int>(type: "int", nullable: false),
-                    permissaocodigoPermissao = table.Column<int>(type: "int", nullable: false),
-                    avaliacaocodigoAvaliacao = table.Column<int>(type: "int", nullable: true)
+                    codigoPermissao = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tabItemDocumento", x => new { x.codigoDocumento, x.codigoItemDocumento });
-                    table.ForeignKey(
-                        name: "FK_tabItemDocumento_tabAvaliacao_avaliacaocodigoAvaliacao",
-                        column: x => x.avaliacaocodigoAvaliacao,
-                        principalTable: "tabAvaliacao",
-                        principalColumn: "codigoAvaliacao");
                     table.ForeignKey(
                         name: "FK_tabItemDocumento_tabDocumento_codigoDocumento",
                         column: x => x.codigoDocumento,
                         principalTable: "tabDocumento",
                         principalColumn: "codigoDocumento",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tabAvaliacao",
+                columns: table => new
+                {
+                    codigoAvaliacao = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    resultado = table.Column<bool>(type: "bit", nullable: false),
+                    justificativa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    dtaAvaliacao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TabItemDocumentocodigoDocumento = table.Column<int>(type: "int", nullable: true),
+                    TabItemDocumentocodigoItemDocumento = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabAvaliacao", x => x.codigoAvaliacao);
                     table.ForeignKey(
-                        name: "FK_tabItemDocumento_tabObjeto_objetoserverName_objetocodigoBancoDados_objetocodigoObjeto",
-                        columns: x => new { x.objetoserverName, x.objetocodigoBancoDados, x.objetocodigoObjeto },
-                        principalTable: "tabObjeto",
-                        principalColumns: new[] { "serverName", "codigoBancoDados", "codigoObjeto" },
+                        name: "FK_tabAvaliacao_tabItemDocumento_TabItemDocumentocodigoDocumento_TabItemDocumentocodigoItemDocumento",
+                        columns: x => new { x.TabItemDocumentocodigoDocumento, x.TabItemDocumentocodigoItemDocumento },
+                        principalTable: "tabItemDocumento",
+                        principalColumns: new[] { "codigoDocumento", "codigoItemDocumento" });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tabItemDocumentoPermissao",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    codigoItemDocumento = table.Column<int>(type: "int", nullable: false),
+                    codigoPermissao = table.Column<int>(type: "int", nullable: false),
+                    tabItemDocumentocodigoDocumento = table.Column<int>(type: "int", nullable: false),
+                    tabItemDocumentocodigoItemDocumento = table.Column<int>(type: "int", nullable: false),
+                    tabPermissaocodigoPermissao = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabItemDocumentoPermissao", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tabItemDocumentoPermissao_tabItemDocumento_tabItemDocumentocodigoDocumento_tabItemDocumentocodigoItemDocumento",
+                        columns: x => new { x.tabItemDocumentocodigoDocumento, x.tabItemDocumentocodigoItemDocumento },
+                        principalTable: "tabItemDocumento",
+                        principalColumns: new[] { "codigoDocumento", "codigoItemDocumento" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_tabItemDocumento_tabPermissao_permissaocodigoPermissao",
-                        column: x => x.permissaocodigoPermissao,
+                        name: "FK_tabItemDocumentoPermissao_tabPermissao_tabPermissaocodigoPermissao",
+                        column: x => x.tabPermissaocodigoPermissao,
                         principalTable: "tabPermissao",
                         principalColumn: "codigoPermissao",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tabObjeto",
+                columns: table => new
+                {
+                    codigoBancoDados = table.Column<int>(type: "int", nullable: false),
+                    codigoObjeto = table.Column<int>(type: "int", nullable: false),
+                    serverName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IdObjeto = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    codigoSchema = table.Column<int>(type: "int", nullable: false),
+                    descricaoTipoObjeto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DatabaseName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ObjectName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TabItemDocumentocodigoDocumento = table.Column<int>(type: "int", nullable: true),
+                    TabItemDocumentocodigoItemDocumento = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tabObjeto", x => new { x.serverName, x.codigoBancoDados, x.codigoObjeto });
+                    table.ForeignKey(
+                        name: "FK_tabObjeto_tabItemDocumento_TabItemDocumentocodigoDocumento_TabItemDocumentocodigoItemDocumento",
+                        columns: x => new { x.TabItemDocumentocodigoDocumento, x.TabItemDocumentocodigoItemDocumento },
+                        principalTable: "tabItemDocumento",
+                        principalColumns: new[] { "codigoDocumento", "codigoItemDocumento" });
                 });
 
             migrationBuilder.CreateIndex(
@@ -362,6 +384,11 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tabAvaliacao_TabItemDocumentocodigoDocumento_TabItemDocumentocodigoItemDocumento",
+                table: "tabAvaliacao",
+                columns: new[] { "TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tabDocumento_avaliadorId",
                 table: "tabDocumento",
                 column: "avaliadorId");
@@ -372,19 +399,19 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 column: "clienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tabItemDocumento_avaliacaocodigoAvaliacao",
-                table: "tabItemDocumento",
-                column: "avaliacaocodigoAvaliacao");
+                name: "IX_tabItemDocumentoPermissao_tabItemDocumentocodigoDocumento_tabItemDocumentocodigoItemDocumento",
+                table: "tabItemDocumentoPermissao",
+                columns: new[] { "tabItemDocumentocodigoDocumento", "tabItemDocumentocodigoItemDocumento" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_tabItemDocumento_objetoserverName_objetocodigoBancoDados_objetocodigoObjeto",
-                table: "tabItemDocumento",
-                columns: new[] { "objetoserverName", "objetocodigoBancoDados", "objetocodigoObjeto" });
+                name: "IX_tabItemDocumentoPermissao_tabPermissaocodigoPermissao",
+                table: "tabItemDocumentoPermissao",
+                column: "tabPermissaocodigoPermissao");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tabItemDocumento_permissaocodigoPermissao",
-                table: "tabItemDocumento",
-                column: "permissaocodigoPermissao");
+                name: "IX_tabObjeto_TabItemDocumentocodigoDocumento_TabItemDocumentocodigoItemDocumento",
+                table: "tabObjeto",
+                columns: new[] { "TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento" });
         }
 
         /// <inheritdoc />
@@ -406,13 +433,19 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "tabAvaliacao");
+
+            migrationBuilder.DropTable(
                 name: "tabAvaliador");
 
             migrationBuilder.DropTable(
                 name: "tabCliente");
 
             migrationBuilder.DropTable(
-                name: "tabItemDocumento");
+                name: "tabItemDocumentoPermissao");
+
+            migrationBuilder.DropTable(
+                name: "tabObjeto");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -421,16 +454,13 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 name: "tabUsuario");
 
             migrationBuilder.DropTable(
-                name: "tabAvaliacao");
+                name: "tabPermissao");
+
+            migrationBuilder.DropTable(
+                name: "tabItemDocumento");
 
             migrationBuilder.DropTable(
                 name: "tabDocumento");
-
-            migrationBuilder.DropTable(
-                name: "tabObjeto");
-
-            migrationBuilder.DropTable(
-                name: "tabPermissao");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -101,7 +101,7 @@ namespace DataStoreWebAPI.Controllers
                         NovaAvaliacao.justificativa = dto.justificativa;
                         this._dbContext.tabAvaliacao.Add(NovaAvaliacao);
 
-                        item.avaliacao = NovaAvaliacao;
+                        //item.avaliacao = NovaAvaliacao;
 
 
                         this._dbContext.tabItemDocumento.Update(item);

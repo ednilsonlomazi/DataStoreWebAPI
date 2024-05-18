@@ -21,7 +21,9 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabAvaliador> tabAvaliador { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
-        public DbSet<TabAvaliacao> tabAvaliacao { get; set; }        
+        public DbSet<TabAvaliacao> tabAvaliacao { get; set; }       
+        public DbSet<TabItemDocumentoPermissao> tabItemDocumentoPermissao { get; set; }    
+        public DbSet<TabItemDocumentoObjeto> tabItemDocumentoObjeto {get; set;}
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,6 +50,20 @@ namespace DataStoreWebAPI.Persistence
 
             });
 
+            modelBuilder.Entity<TabItemDocumentoPermissao>(e => {
+
+                e.HasKey(tp => tp.Id);
+                
+
+            });      
+
+            modelBuilder.Entity<TabItemDocumentoObjeto>(e => {
+
+                e.HasKey(tp => tp.Id);
+                
+
+            });                    
+
             modelBuilder.Entity<TabItemDocumento>(e => {
 
                 e.HasKey(tid => new { tid.codigoDocumento, tid.codigoItemDocumento });             
@@ -55,7 +71,8 @@ namespace DataStoreWebAPI.Persistence
                 e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
 
                 //e.HasIndex(tid => new {tid.codigoDocumento, tid.codigoItemDocumento, tid.objeto, tid.permissao}).IsUnique();
-
+ 
+                    
                 
             });
 
