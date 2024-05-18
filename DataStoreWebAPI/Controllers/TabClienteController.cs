@@ -12,7 +12,7 @@ namespace DataStoreWebAPI.Controllers
 
     [Route("api/datastore")]
     [ApiController]
-    [Authorize] // em conjunto com o framework identity libera acesso ao controlador apenas a usuarios logados
+    [Authorize(Roles = "Admin, Gerente")] // em conjunto com o framework identity libera acesso ao controlador apenas a usuarios logados
     public class TabClienteController : ControllerBase
     {
     

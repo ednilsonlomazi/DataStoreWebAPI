@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using DataStoreWebAPI.Identity.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using DataStoreWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +57,8 @@ builder.Services.Configure<IdentityOptions>(option => {
     option.Password.RequireNonAlphanumeric = false; 
 });
 
+builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -67,9 +70,23 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+await CriarPerfisUsuariosAsync(app);
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+async Task CriarPerfisUsuariosAsync(WebApplication app)
+{
+    var scoppedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+    using (var scope = scoppedFactory.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<ISeedUserRoleInitial>();
+        await service.SeedRoleAsync();
+        await service.SeedUserAsync();
+    }
+}
