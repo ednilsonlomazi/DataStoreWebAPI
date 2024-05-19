@@ -55,10 +55,10 @@ namespace DataStoreWebAPI.Controllers
                                                                    && td.isOpen 
                                                                    && td.avaliador == null
                                                                    && td.codigoDocumento == cod_documento
-                                                                ).Single();
+                                                                ).SingleOrDefault();
             if(documento != null)
             {
-                var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).Single();
+                var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
                 if(avaliador != null)
                 {
                     documento.avaliador = avaliador;
@@ -67,53 +67,50 @@ namespace DataStoreWebAPI.Controllers
                     return Ok();
 
                 }
-                return NotFound();
-                
-                
+                return BadRequest("Avaliador Inválido");         
             }
-            return NotFound();
+            return BadRequest("Documento Inválido");
         }        
 
         // avalia um item que ja possui processo de avaliacao do documento iniciado por um avaliador
         [HttpPut("avaliar-item")]
         public IActionResult PutAvaliarItem(AvaliacaoDto dto)
         {
-            
-            var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
-                                                                   && td.isOpen 
-                                                                   && td.avaliador != null
-                                                                   && td.codigoDocumento == dto.codigoDocumento
-                                                                ).Single();
-                                                                
-            if(documento != null)
+            var avaliador = this._dbContext.Users.Where(tu => tu.Email == dto.email_avaliador).SingleOrDefault();
+            if(avaliador != null)
             {
-                var avaliador = this._dbContext.Users.Where(tu => tu.Email == dto.email_avaliador).Single();
-                if(avaliador != null)
+                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
+                                                                    && td.isOpen 
+                                                                    && td.avaliador == avaliador // importante, o avaliador x nao pode avaliar doc do avaliador y
+                                                                    && td.codigoDocumento == dto.codigoDocumento
+                                                                    ).SingleOrDefault();
+                if(documento != null)
                 {
                     var item = this._dbContext.tabItemDocumento.Where(tid => tid.codigoItemDocumento == dto.codigoItemDocumento 
                                                                       && tid.codigoDocumento == dto.codigoDocumento
-                                                                      && tid.avaliacao == null).Single();
+                                                                      ).SingleOrDefault();
                     if(item != null)
                     {
-                        // payload da avaliacao
+                        
                         var NovaAvaliacao = new TabAvaliacao();
                         NovaAvaliacao.resultado = dto.resultado;
                         NovaAvaliacao.justificativa = dto.justificativa;
-                        this._dbContext.tabAvaliacao.Add(NovaAvaliacao);
+                        NovaAvaliacao.codigoItemDocumento = dto.codigoItemDocumento;
+                        NovaAvaliacao.codigoDocumento = dto.codigoDocumento;
 
-                        //item.avaliacao = NovaAvaliacao;
+                        this._dbContext.Attach(NovaAvaliacao);
+                        this._dbContext.Entry(NovaAvaliacao).State = EntityState.Added;
 
-
-                        this._dbContext.tabItemDocumento.Update(item);
                         this._dbContext.SaveChanges();
                         return Ok();
 
                     }
-                    return NotFound();
+                    return NotFound("Item de documento Inválido");
                 }
-                return NotFound();
+                return BadRequest("Documento Inválido");
             }
-            return NotFound();
+            return BadRequest("Avaliador Inválido");
+                                                            
         }                
 
 

@@ -65,7 +65,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpPost("adicionar-item-solicitacao")]
         public IActionResult PostAdicionarItemSolicitacao(ItemDocumentoDto dto)
         {
-            var documento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == dto.codigoDocumento).Single(); 
+            var documento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == dto.codigoDocumento).SingleOrDefault(); 
             
             if (documento != null && documento.isOpen) 
             {

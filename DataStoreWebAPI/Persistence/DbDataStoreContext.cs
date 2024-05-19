@@ -77,6 +77,10 @@ namespace DataStoreWebAPI.Persistence
                     tid.codigoObjeto, 
                     tid.codigoPermissao
                 }).IsUnique();
+
+                e.HasMany(tid => tid.avaliacao)
+                 .WithOne()
+                 .HasForeignKey(tid => new {tid.codigoDocumento, tid.codigoItemDocumento});
  
                     
                 

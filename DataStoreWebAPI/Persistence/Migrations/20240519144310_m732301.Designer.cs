@@ -4,6 +4,7 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    partial class DbDataStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240519144310_m732301")]
+    partial class m732301
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,6 +32,12 @@ namespace DataStoreWebAPI.Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoAvaliacao"));
+
+                    b.Property<int?>("TabItemDocumentocodigoDocumento")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TabItemDocumentocodigoItemDocumento")
+                        .HasColumnType("int");
 
                     b.Property<int>("codigoDocumento")
                         .HasColumnType("int");
@@ -48,7 +57,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasKey("codigoAvaliacao");
 
-                    b.HasIndex("codigoDocumento", "codigoItemDocumento");
+                    b.HasIndex("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
 
                     b.ToTable("tabAvaliacao");
                 });
@@ -469,9 +478,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", null)
                         .WithMany("avaliacao")
-                        .HasForeignKey("codigoDocumento", "codigoItemDocumento")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabAvaliador", b =>
