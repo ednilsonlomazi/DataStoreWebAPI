@@ -46,7 +46,7 @@ namespace DataStoreWebAPI.Controllers
         public IActionResult PostRealizarSolicitacao(DocumentoDto dto)
         {
             // o dbset do identityuser eh public virtual IDbSet<TUser> Users { get; set; }
-            var cliente = this._dbContext.Users.Where(tu => tu.Email == dto.email_cliente).Single();
+            var cliente = this._dbContext.Users.Where(tu => tu.Email == dto.email_cliente).SingleOrDefault();
             if(cliente != null)
             {
                 
@@ -72,42 +72,57 @@ namespace DataStoreWebAPI.Controllers
                 
 
                 // ----------- endpoints ------------ //
-                var obj = new TabObjeto();
-                obj.codigoBancoDados = dto.codigoBancoDados;
-                obj.codigoObjeto = dto.codigoObjeto;
-                obj.serverName = dto.serverName;
+                var objeto = this._dbContext.tabObjeto.Where(to => to.serverName == dto.serverName && 
+                                                             to.codigoBancoDados == dto.codigoBancoDados &&
+                                                             to.codigoObjeto == dto.codigoObjeto
+                                                            ).SingleOrDefault();
+                
+                var permissao = this._dbContext.tabPermissao.Where(tp => tp.codigoPermissao == dto.codigoPermissao).SingleOrDefault();
 
-                var p = new TabPermissao();
-                p.codigoPermissao = dto.codigoPermissao;
-                // ---------------------------------- //
+                if(objeto != null && permissao != null)
+                {
+                    var itemDocumento = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == dto.codigoDocumento &&
+                                                                               tid.codigoObjeto == objeto.IdObjeto && // muito importante essa parte
+                                                                               tid.codigoPermissao == dto.codigoPermissao).SingleOrDefault();
+                    if(itemDocumento == null)
+                    {
+                        // ----------------Config Item Doc ------------------ //
 
-                var NovoItemDocumento = new TabItemDocumento();
-                NovoItemDocumento.codigoDocumento = dto.codigoDocumento;
+                        var NovoItemDocumento = new TabItemDocumento();
+                        NovoItemDocumento.codigoDocumento = dto.codigoDocumento;
+                        NovoItemDocumento.codigoObjeto = objeto.IdObjeto; // Id universal do objeto entre servidores
+                        NovoItemDocumento.codigoPermissao = dto.codigoPermissao;
 
-                // ---------- tabelas de juncao ---------- //
-                var joinTableObj = new TabItemDocumentoObjeto();
-                joinTableObj.tabObjeto = obj;
-                joinTableObj.tabItemDocumento = NovoItemDocumento;
+                        // ---------- tabelas de juncao ---------- //
+                        var joinTableObj = new TabItemDocumentoObjeto();
+                        joinTableObj.tabObjeto = objeto;
+                        joinTableObj.tabItemDocumento = NovoItemDocumento;
 
-                var joinTablePermissao = new TabItemDocumentoPermissao();
-                joinTablePermissao.tabPermissao = p;
-                joinTablePermissao.tabItemDocumento = NovoItemDocumento;                
-                // ------------------------------------------------- //
+                        var joinTablePermissao = new TabItemDocumentoPermissao();
+                        joinTablePermissao.tabPermissao = permissao;
+                        joinTablePermissao.tabItemDocumento = NovoItemDocumento;
 
-                this._dbContext.Attach(NovoItemDocumento);
-                this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
+                        // ---------------------Attachments ---------------------------- //
 
-                this._dbContext.Attach(joinTableObj);
-                this._dbContext.Entry(joinTableObj).State = EntityState.Added;
+                        this._dbContext.Attach(NovoItemDocumento);
+                        this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
 
-                this._dbContext.Attach(joinTablePermissao);
-                this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;
+                        this._dbContext.Attach(joinTableObj);
+                        this._dbContext.Entry(joinTableObj).State = EntityState.Added;
 
-                this._dbContext.SaveChanges();
-                return Ok(); 
+                        this._dbContext.Attach(joinTablePermissao);
+                        this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;
+
+                        this._dbContext.SaveChanges();
+                        return Ok();                   
+                    }
+                    return BadRequest("Você já fez essa solicitacao");
+
+ 
+                }
+                return BadRequest("Item de documento Invalido");
             }
-
-            return NoContent();
+            return BadRequest("Documento Inválido");
         }
 
         [HttpGet("solicitacao-realizada/{cod}")]

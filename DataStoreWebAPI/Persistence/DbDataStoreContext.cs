@@ -71,7 +71,12 @@ namespace DataStoreWebAPI.Persistence
 
                 e.Property(tid => tid.codigoItemDocumento).ValueGeneratedOnAdd();
 
-                //e.HasIndex(tid => new {tid.codigoDocumento, tid.codigoItemDocumento, tid.objeto, tid.permissao}).IsUnique();
+                e.HasIndex(tid => new {
+                    tid.codigoDocumento, 
+                    //tid.codigoItemDocumento, // retirado pois por ser autoincremente, sempre deixava o indice unico... perdendo o sentido do indice 
+                    tid.codigoObjeto, 
+                    tid.codigoPermissao
+                }).IsUnique();
  
                     
                 
