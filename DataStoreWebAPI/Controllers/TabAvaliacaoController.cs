@@ -101,6 +101,8 @@ namespace DataStoreWebAPI.Controllers
                         this._dbContext.Attach(NovaAvaliacao);
                         this._dbContext.Entry(NovaAvaliacao).State = EntityState.Added;
 
+
+
                         this._dbContext.SaveChanges();
                         return Ok();
 
@@ -113,6 +115,41 @@ namespace DataStoreWebAPI.Controllers
                                                             
         }                
 
+
+        [HttpGet("visualizar-itens-avaliados")]
+        public IActionResult GetItensAvaliadosByAvaliador(string email_avaliador)
+        {
+            var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
+            if(avaliador != null)
+            {
+                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
+                                                                         td.avaliador == avaliador 
+                                                                  ).ToList();
+                if(documento != null)
+                {
+                    List<TabItemDocumento> itens_doc = new();
+                    foreach (var doc in documento)
+                    {
+                        List<TabItemDocumento> itens_doc_verifica = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == doc.codigoDocumento &&
+                                                                      tid.avaliacao.Count > 0
+                                                                      ).ToList();
+                        
+                        foreach(TabItemDocumento itemdoc in itens_doc_verifica)
+                        {
+                            if(itemdoc != null){
+                                itens_doc.Add(itemdoc);
+                            }
+                        }
+                        
+                        return Ok(itens_doc);
+                    }
+                    return Ok("O Avaliador nao possui itens avaliados");
+                }
+                return Ok("O Avaliador nao iniciou nenhuma avaliacao");
+            }
+            return BadRequest("Avaliador Inválido");
+                                                            
+        }   
 
     }
 }
