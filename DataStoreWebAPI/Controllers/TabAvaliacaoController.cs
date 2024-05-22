@@ -125,27 +125,35 @@ namespace DataStoreWebAPI.Controllers
                 var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
                                                                          td.avaliador == avaliador 
                                                                   ).ToList();
-                if(documento != null)
+
+                if(documento.Count > 0)
                 {
-                    List<TabItemDocumento> itens_doc = new();
-                    foreach (var doc in documento)
-                    {
-                        List<TabItemDocumento> itens_doc_verifica = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == doc.codigoDocumento &&
-                                                                      tid.avaliacao.Count > 0
-                                                                      ).ToList();
-                        
-                        foreach(TabItemDocumento itemdoc in itens_doc_verifica)
+                    // syntax-based query
+                    var view_item_doc = 
+                    (
+                        from ep in documento
+
+                            join e in this._dbContext.tabItemDocumento 
+                                on ep.codigoDocumento equals e.codigoDocumento
+
+                            join t in this._dbContext.tabAvaliacao 
+                                on new {e.codigoDocumento, e.codigoItemDocumento} equals new {t.codigoDocumento, t.codigoItemDocumento} 
+                    
+                        select new 
                         {
-                            if(itemdoc != null){
-                                itens_doc.Add(itemdoc);
-                            }
+                            cod_doc  = e.codigoDocumento,
+                            cod_item_doc = e.codigoItemDocumento,
+                            resultado = t.resultado,
+                            justificativa = t.justificativa
                         }
-                        
-                        return Ok(itens_doc);
+                    );
+                    if(view_item_doc != null)
+                    {
+                        return Ok(view_item_doc);
                     }
-                    return Ok("O Avaliador nao possui itens avaliados");
+                    return Ok("O avaliador nao avaliou nada ainda");
                 }
-                return Ok("O Avaliador nao iniciou nenhuma avaliacao");
+                return Ok("Avaliador não iniciou avaliações");                  
             }
             return BadRequest("Avaliador Inválido");
                                                             
