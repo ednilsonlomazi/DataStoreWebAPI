@@ -94,7 +94,7 @@ namespace DataStoreWebAPI.Persistence
                 e.HasMany(tid => tid.tabItemDocumento)
                  .WithOne()
                  .HasForeignKey(tid => tid.codigoDocumento); // a foreign key é a primary key da child tab quando (vazio)
-            
+                e.HasOne(td => td.cliente).WithMany().HasForeignKey(x => x.idCliente);
                             
             });
 

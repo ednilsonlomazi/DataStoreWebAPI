@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20240519130144_m073230")]
-    partial class m073230
+    [Migration("20240522231327_m7323012")]
+    partial class m7323012
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,10 +33,10 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoAvaliacao"));
 
-                    b.Property<int?>("TabItemDocumentocodigoDocumento")
+                    b.Property<int>("codigoDocumento")
                         .HasColumnType("int");
 
-                    b.Property<int?>("TabItemDocumentocodigoItemDocumento")
+                    b.Property<int>("codigoItemDocumento")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("dtaAvaliacao")
@@ -51,7 +51,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasKey("codigoAvaliacao");
 
-                    b.HasIndex("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
+                    b.HasIndex("codigoDocumento", "codigoItemDocumento");
 
                     b.ToTable("tabAvaliacao");
                 });
@@ -87,14 +87,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<string>("avaliadorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("clienteId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("dataEmissao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("idCliente")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("isCanceled")
                         .HasColumnType("bit");
@@ -106,7 +107,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasIndex("avaliadorId");
 
-                    b.HasIndex("clienteId");
+                    b.HasIndex("idCliente");
 
                     b.ToTable("tabDocumento");
                 });
@@ -472,7 +473,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     b.HasOne("DataStoreWebAPI.Entities.TabItemDocumento", null)
                         .WithMany("avaliacao")
-                        .HasForeignKey("TabItemDocumentocodigoDocumento", "TabItemDocumentocodigoItemDocumento");
+                        .HasForeignKey("codigoDocumento", "codigoItemDocumento")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DataStoreWebAPI.Entities.TabAvaliador", b =>
@@ -505,7 +508,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "cliente")
                         .WithMany()
-                        .HasForeignKey("clienteId");
+                        .HasForeignKey("idCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("avaliador");
 

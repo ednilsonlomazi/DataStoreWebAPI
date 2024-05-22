@@ -40,9 +40,24 @@ namespace DataStoreWebAPI.Controllers
                                                                    && td.isOpen 
                                                                    && td.avaliador == null
                                                                 ).ToList();
+         
+            var view_docs_disponiveis = 
+            (
+                from doc in documentos
+                    join cliente in this._dbContext.Users
+                        on doc.idCliente equals cliente.Id
+
+                select new 
+                {
+                    cod_doc  = doc.codigoDocumento,
+                    cliente = cliente.UserName,
+                    dta_abertura = doc.dataSolicitacao
+                }
+            );
+            
             if(documentos != null)
             {
-                return Ok(documentos);
+                return Ok(view_docs_disponiveis);
             }
             return NotFound();
         }
@@ -122,6 +137,7 @@ namespace DataStoreWebAPI.Controllers
             var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
             if(avaliador != null)
             {
+                
                 var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
                                                                          td.avaliador == avaliador 
                                                                   ).ToList();

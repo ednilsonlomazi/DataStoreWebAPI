@@ -84,14 +84,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<string>("avaliadorId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("clienteId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("dataEmissao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("idCliente")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("isCanceled")
                         .HasColumnType("bit");
@@ -103,7 +104,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasIndex("avaliadorId");
 
-                    b.HasIndex("clienteId");
+                    b.HasIndex("idCliente");
 
                     b.ToTable("tabDocumento");
                 });
@@ -504,7 +505,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "cliente")
                         .WithMany()
-                        .HasForeignKey("clienteId");
+                        .HasForeignKey("idCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("avaliador");
 
