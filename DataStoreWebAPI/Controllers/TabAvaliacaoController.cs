@@ -33,7 +33,7 @@ namespace DataStoreWebAPI.Controllers
 
 
         // retorna todos documentos passiveis de avaliacao
-        [HttpGet("documentos-para-avaliar")]
+        [HttpGet("visualiza-documentos-para-avaliar")]
         public IActionResult GetDocumentosParaAvaliar()
         {
             var documentos = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
@@ -61,6 +61,56 @@ namespace DataStoreWebAPI.Controllers
             }
             return NotFound();
         }
+
+
+        // retorna todos documentos passiveis de avaliacao
+        [HttpGet("visualiza-itens-documento/{codigo_documento}")]
+        public IActionResult GetItensDocumento(int codigo_documento)
+        {
+            var itensDoc = this._dbContext.tabItemDocumento.Where(td => td.codigoDocumento == codigo_documento 
+                                                                ).ToList();
+    
+            var view_item_doc = 
+            (
+                from idoc in itensDoc
+                    
+                    join obj in this._dbContext.tabObjeto
+                        on idoc.codigoObjeto equals obj.IdObjeto
+
+                    join permissao in this._dbContext.tabPermissao
+                        on idoc.codigoPermissao equals permissao.codigoPermissao
+
+                    //join ava in this._dbContext.tabAvaliacao.DefaultIfEmpty()
+                    //    on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals new {ava.codigoDocumento, ava.codigoItemDocumento} 
+
+                    join doc in this._dbContext.tabDocumento 
+                        on idoc.codigoDocumento equals doc.codigoDocumento
+    
+                    join cliente in this._dbContext.Users
+                        on doc.idCliente equals cliente.Id
+
+                    //join avaliador in this._dbContext.Users.DefaultIfEmpty()
+                    //    on doc.idAvaliador equals avaliador.Id
+
+                select new 
+                {
+                    cod_item_doc = idoc.codigoItemDocumento,
+                    TipoObjeto = obj.descricaoTipoObjeto,
+                    NomeObjeto = obj.ObjectName,
+                    Database = obj.DatabaseName,
+                    Servidor = obj.serverName,
+                    Permissao = permissao.descricaoPermissao
+                    //resultado = ava.resultado,
+                    //justificativa = ava.justificativa
+                }
+            ); 
+            
+            if(itensDoc != null)
+            {
+                return Ok(view_item_doc);
+            }
+            return NotFound();
+        }        
 
         // iniciar uma avaliacao
         [HttpPut("iniciar-avaliacao/{cod_documento}/{email_avaliador}")]

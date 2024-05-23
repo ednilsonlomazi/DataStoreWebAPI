@@ -81,14 +81,14 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoDocumento"));
 
-                    b.Property<string>("avaliadorId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("dataEmissao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("idAvaliador")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("idCliente")
                         .IsRequired()
@@ -102,7 +102,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     b.HasKey("codigoDocumento");
 
-                    b.HasIndex("avaliadorId");
+                    b.HasIndex("idAvaliador");
 
                     b.HasIndex("idCliente");
 
@@ -501,12 +501,13 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "avaliador")
                         .WithMany()
-                        .HasForeignKey("avaliadorId");
+                        .HasForeignKey("idAvaliador")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "cliente")
                         .WithMany()
                         .HasForeignKey("idCliente")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("avaliador");

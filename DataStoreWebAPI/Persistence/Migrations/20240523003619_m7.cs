@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m7323012 : Migration
+    public partial class m7 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -211,7 +211,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     codigoDocumento = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     idCliente = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    avaliadorId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    idAvaliador = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     isOpen = table.Column<bool>(type: "bit", nullable: false),
                     isCanceled = table.Column<bool>(type: "bit", nullable: false),
                     dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -221,16 +221,15 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_tabDocumento", x => x.codigoDocumento);
                     table.ForeignKey(
-                        name: "FK_tabDocumento_AspNetUsers_avaliadorId",
-                        column: x => x.avaliadorId,
+                        name: "FK_tabDocumento_AspNetUsers_idAvaliador",
+                        column: x => x.idAvaliador,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_tabDocumento_AspNetUsers_idCliente",
                         column: x => x.idCliente,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -410,9 +409,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 columns: new[] { "codigoDocumento", "codigoItemDocumento" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_tabDocumento_avaliadorId",
+                name: "IX_tabDocumento_idAvaliador",
                 table: "tabDocumento",
-                column: "avaliadorId");
+                column: "idAvaliador");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tabDocumento_idCliente",
