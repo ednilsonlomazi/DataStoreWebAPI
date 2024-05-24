@@ -80,18 +80,19 @@ namespace DataStoreWebAPI.Controllers
                     join permissao in this._dbContext.tabPermissao
                         on idoc.codigoPermissao equals permissao.codigoPermissao
 
-                    //join ava in this._dbContext.tabAvaliacao.DefaultIfEmpty()
-                    //    on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals new {ava.codigoDocumento, ava.codigoItemDocumento} 
-
                     join doc in this._dbContext.tabDocumento 
                         on idoc.codigoDocumento equals doc.codigoDocumento
     
                     join cliente in this._dbContext.Users
                         on doc.idCliente equals cliente.Id
 
-                    //join avaliador in this._dbContext.Users.DefaultIfEmpty()
-                    //    on doc.idAvaliador equals avaliador.Id
+                    join avaliador in this._dbContext.Users // left join em avaliador
+                        on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
 
+                    join ta in this._dbContext.tabAvaliacao // left join avaliacao
+                        on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
+                           new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                    
                 select new 
                 {
                     cod_item_doc = idoc.codigoItemDocumento,
@@ -99,13 +100,35 @@ namespace DataStoreWebAPI.Controllers
                     NomeObjeto = obj.ObjectName,
                     Database = obj.DatabaseName,
                     Servidor = obj.serverName,
-                    Permissao = permissao.descricaoPermissao
-                    //resultado = ava.resultado,
-                    //justificativa = ava.justificativa
+                    Permissao = permissao.descricaoPermissao,
+                    Cliente = cliente.UserName,
+                    Avaliador = tmp?.UserName,
+                    ResultadoAvaliacao = left_ta?.resultado
+                     
                 }
             ); 
+            /*
+            var item_ava =
+            (
+                from item in view_item_doc
+                from ava in this._dbContext.Users.Where(a => a.Id == item.idAvaliador).DefaultIfEmpty()
+                        
+                select new
+                {
+                    item.cod_item_doc,
+                    item.TipoObjeto,
+                    item.NomeObjeto,
+                    item.Database,
+                    item.Servidor,
+                    item.Permissao,
+                    item.Cliente,
+                    ava.UserName
+                }
+                    
+            );
+            */
             
-            if(itensDoc != null)
+            if(view_item_doc != null)
             {
                 return Ok(view_item_doc);
             }
