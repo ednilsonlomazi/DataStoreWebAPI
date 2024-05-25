@@ -6,12 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using DataStoreWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
- 
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 
 namespace DataStoreWebAPI.Controllers
 {
     /*------------------------- Servicos: --------------------------------*/
     // retorna todos os documentos possiveis de avaliacao (pendente de avaliacao)
+    // retorna a visualização dos itens do documento
+    // retorna uma visao de todos os itens avaliados pelo avaliador
     // inicia uma avaliacao de um documento ja existente
     // avalia um item que ja possui processo de avaliacao iniciado por um avaliador
     /*-----------------------------------------------------------------------------*/
@@ -63,7 +66,7 @@ namespace DataStoreWebAPI.Controllers
         }
 
 
-        // retorna todos documentos passiveis de avaliacao
+        // retorna a visualização dos itens do documento
         [HttpGet("visualiza-itens-documento/{codigo_documento}")]
         public IActionResult GetItensDocumento(int codigo_documento)
         {
@@ -107,26 +110,6 @@ namespace DataStoreWebAPI.Controllers
                      
                 }
             ); 
-            /*
-            var item_ava =
-            (
-                from item in view_item_doc
-                from ava in this._dbContext.Users.Where(a => a.Id == item.idAvaliador).DefaultIfEmpty()
-                        
-                select new
-                {
-                    item.cod_item_doc,
-                    item.TipoObjeto,
-                    item.NomeObjeto,
-                    item.Database,
-                    item.Servidor,
-                    item.Permissao,
-                    item.Cliente,
-                    ava.UserName
-                }
-                    
-            );
-            */
             
             if(view_item_doc != null)
             {
@@ -134,6 +117,65 @@ namespace DataStoreWebAPI.Controllers
             }
             return NotFound();
         }        
+
+        // retorna uma visao de todos os itens avaliados pelo avaliador
+        [HttpGet("visualizar-itens-avaliados/{email_avaliador}")]
+        public IActionResult GetItensAvaliadosByAvaliador(string email_avaliador)
+        {
+            var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
+            if(avaliador != null)
+            {
+                
+                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
+                                                                         td.avaliador == avaliador 
+                                                                  ).ToList();
+
+                if(documento.Count > 0)
+                {
+                    var view_item_doc = 
+                    (
+                        from doc in documento
+                            
+                            join idoc in this._dbContext.tabItemDocumento
+                                on doc.codigoDocumento equals idoc.codigoDocumento
+
+                            join obj in this._dbContext.tabObjeto
+                                on idoc.codigoObjeto equals obj.IdObjeto
+
+                            join permissao in this._dbContext.tabPermissao
+                                on idoc.codigoPermissao equals permissao.codigoPermissao
+            
+                            join cliente in this._dbContext.Users
+                                on doc.idCliente equals cliente.Id
+
+                            join ta in this._dbContext.tabAvaliacao // left join avaliacao
+                                on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
+                                new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                            
+                        select new 
+                        {
+                            cod_item_doc = idoc.codigoItemDocumento,
+                            TipoObjeto = obj.descricaoTipoObjeto,
+                            NomeObjeto = obj.ObjectName,
+                            Database = obj.DatabaseName,
+                            Servidor = obj.serverName,
+                            Permissao = permissao.descricaoPermissao,
+                            Cliente = cliente.UserName,
+                            ResultadoAvaliacao = left_ta?.resultado
+                            
+                        }
+                    ); 
+                    if(view_item_doc != null)
+                    {
+                        return Ok(view_item_doc);
+                    }
+                    return Ok("O avaliador nao avaliou nada ainda");
+                }
+                return Ok("Avaliador não iniciou avaliações");                  
+            }
+            return BadRequest("Avaliador Inválido");
+                                                            
+        }
 
         // iniciar uma avaliacao
         [HttpPut("iniciar-avaliacao/{cod_documento}/{email_avaliador}")]
@@ -161,8 +203,8 @@ namespace DataStoreWebAPI.Controllers
         }        
 
         // avalia um item que ja possui processo de avaliacao do documento iniciado por um avaliador
-        [HttpPut("avaliar-item")]
-        public IActionResult PutAvaliarItem(AvaliacaoDto dto)
+        [HttpPost("avaliar-item")]
+        public IActionResult PostAvaliarItem(AvaliacaoDto dto)
         {
             var avaliador = this._dbContext.Users.Where(tu => tu.Email == dto.email_avaliador).SingleOrDefault();
             if(avaliador != null)
@@ -203,50 +245,7 @@ namespace DataStoreWebAPI.Controllers
                                                             
         }                
 
-
-        [HttpGet("visualizar-itens-avaliados")]
-        public IActionResult GetItensAvaliadosByAvaliador(string email_avaliador)
-        {
-            var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
-            if(avaliador != null)
-            {
-                
-                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
-                                                                         td.avaliador == avaliador 
-                                                                  ).ToList();
-
-                if(documento.Count > 0)
-                {
-                    // syntax-based query
-                    var view_item_doc = 
-                    (
-                        from ep in documento
-
-                            join e in this._dbContext.tabItemDocumento 
-                                on ep.codigoDocumento equals e.codigoDocumento
-
-                            join t in this._dbContext.tabAvaliacao 
-                                on new {e.codigoDocumento, e.codigoItemDocumento} equals new {t.codigoDocumento, t.codigoItemDocumento} 
-                    
-                        select new 
-                        {
-                            cod_doc  = e.codigoDocumento,
-                            cod_item_doc = e.codigoItemDocumento,
-                            resultado = t.resultado,
-                            justificativa = t.justificativa
-                        }
-                    );
-                    if(view_item_doc != null)
-                    {
-                        return Ok(view_item_doc);
-                    }
-                    return Ok("O avaliador nao avaliou nada ainda");
-                }
-                return Ok("Avaliador não iniciou avaliações");                  
-            }
-            return BadRequest("Avaliador Inválido");
-                                                            
-        }   
+   
 
     }
 }

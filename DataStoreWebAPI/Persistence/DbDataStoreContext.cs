@@ -16,9 +16,6 @@ namespace DataStoreWebAPI.Persistence
         //DbSet funcionando ai como uma tabela (armazenando registros do tipo CommonEntity)
         public DbSet<TabDocumento> tabDocumento { get; set; }
         public DbSet<TabItemDocumento> tabItemDocumento { get; set; }
-        public DbSet<TabUsuario> tabUsuario { get; set; }
-        public DbSet<TabCliente> tabCliente { get; set; }
-        public DbSet<TabAvaliador> tabAvaliador { get; set; }
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
         public DbSet<TabAvaliacao> tabAvaliacao { get; set; }       
@@ -98,41 +95,7 @@ namespace DataStoreWebAPI.Persistence
             });
 
 
-            // -- -- -- -- -- -- -- -- -- relacionamentos One to One -- -- -- -- -- -- -- -- //
-            modelBuilder.Entity<TabCliente>(e => {
 
-                e.HasKey(tu => tu.codigoCliente); 
-
-            });
-
-            modelBuilder.Entity<TabAvaliador>(e => {
-
-                e.HasKey(tu => tu.codigoAvaliador);
-
-            });
-
-            modelBuilder.Entity<TabUsuario>(e => {
-
-                e.HasKey(tu => tu.codigoUsuario);
-
-            });
-
-
-            modelBuilder.Entity<TabUsuario>(e => {
-
-                e.HasOne(tu => tu.tabCliente)
-                 .WithOne(tu => tu.tabUsuario)
-                 .HasForeignKey<TabCliente>();
-
-            });
-
-            modelBuilder.Entity<TabUsuario>(e => {
-
-                e.HasOne(tu => tu.tabAvaliador)
-                 .WithOne(tu => tu.tabUsuario)
-                 .HasForeignKey<TabAvaliador>();
-
-            });
             // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
             modelBuilder.Entity<TabAvaliacao>(e => {
 
