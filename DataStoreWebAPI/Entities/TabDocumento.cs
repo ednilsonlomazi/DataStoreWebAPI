@@ -18,6 +18,8 @@ namespace DataStoreWebAPI.Entities
         public int codigoDocumento { get; set; }
         public string idCliente {get; set;}
         public string? idAvaliador {get; set;}
+        public int codigoStatusDocumento {get; set;}
+        public TabStatusDocumento tabStatusDocumento {get; set;}
         public IdentityUser cliente { get; set; }    
         public IdentityUser? avaliador { get; set; } 
         public bool isOpen { get; set; }

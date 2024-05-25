@@ -19,8 +19,9 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabObjeto> tabObjeto { get; set; }
         public DbSet<TabPermissao> tabPermissao { get; set; }
         public DbSet<TabAvaliacao> tabAvaliacao { get; set; }       
-        public DbSet<TabItemDocumentoPermissao> tabItemDocumentoPermissao { get; set; }    
-        public DbSet<TabItemDocumentoObjeto> tabItemDocumentoObjeto {get; set;}
+        public DbSet<TabStatusDocumento> tabStatusDocumentos {get; set;}
+        //public DbSet<TabItemDocumentoPermissao> tabItemDocumentoPermissao { get; set; }    
+        //public DbSet<TabItemDocumentoObjeto> tabItemDocumentoObjeto {get; set;}
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +33,13 @@ namespace DataStoreWebAPI.Persistence
             modelBuilder.Entity<TabObjeto>(e => {
 
                 e.HasKey(to => to.IdObjeto); // id universal de todos os servers, bancos e objetos
+                
                 e.HasIndex(to => new {to.serverName, to.codigoBancoDados, to.codigoObjeto}).IsUnique();
+                
+                e.HasMany(to => to.tabItemDocumentos)
+                 .WithOne()
+                 .HasForeignKey(tid => tid.codigoObjeto);
+
                 e.Property(to => to.serverName).ValueGeneratedNever();
                 e.Property(to => to.codigoBancoDados).ValueGeneratedNever();
                 e.Property(to => to.codigoObjeto).ValueGeneratedNever();
@@ -45,22 +52,13 @@ namespace DataStoreWebAPI.Persistence
 
                 e.HasKey(tp => tp.codigoPermissao);
                 e.Property(tp => tp.codigoPermissao);
+                
+                e.HasMany(tp => tp.tabItemDocumento)
+                 .WithOne()
+                 .HasForeignKey(tid => tid.codigoPermissao);
 
             });
-
-            modelBuilder.Entity<TabItemDocumentoPermissao>(e => {
-
-                e.HasKey(tp => tp.Id);
-                
-
-            });      
-
-            modelBuilder.Entity<TabItemDocumentoObjeto>(e => {
-
-                e.HasKey(tp => tp.Id);
-                
-
-            });                    
+                 
 
             modelBuilder.Entity<TabItemDocumento>(e => {
 
@@ -91,7 +89,7 @@ namespace DataStoreWebAPI.Persistence
                 e.HasMany(tid => tid.tabItemDocumento).WithOne().HasForeignKey(tid => tid.codigoDocumento); // a foreign key é a primary key da child tab quando (vazio)
                 e.HasOne(td => td.cliente).WithMany().HasForeignKey(x => x.idCliente).OnDelete(DeleteBehavior.NoAction);
                 e.HasOne(td => td.avaliador).WithMany().HasForeignKey(x => x.idAvaliador).OnDelete(DeleteBehavior.NoAction);
-                            
+                e.HasOne(td => td.tabStatusDocumento).WithMany().HasForeignKey(tsd => tsd.codigoStatusDocumento);            
             });
 
 
@@ -100,6 +98,12 @@ namespace DataStoreWebAPI.Persistence
             modelBuilder.Entity<TabAvaliacao>(e => {
 
                 e.HasKey(ta => ta.codigoAvaliacao);
+
+            });
+
+            modelBuilder.Entity<TabStatusDocumento>(e => {
+
+                e.HasKey(ta => ta.codigoStatus);
 
             });
 

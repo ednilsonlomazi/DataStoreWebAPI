@@ -9,7 +9,7 @@ namespace DataStoreWebAPI.Entities
         public string? descricaoPermissao { set; get; }
         public string? classePermissao { set; get; }
 
-        public List<TabItemDocumentoPermissao> tabItemDocumentoPermissao {get; set;} = [];
+        public List<TabItemDocumento> tabItemDocumento {get; set;} = [];
 
     }
 }

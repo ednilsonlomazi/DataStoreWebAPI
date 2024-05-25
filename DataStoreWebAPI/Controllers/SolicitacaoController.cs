@@ -94,6 +94,8 @@ namespace DataStoreWebAPI.Controllers
 
                 var permissao = this._dbContext.tabPermissao.Where(tp => tp.descricaoPermissao == dto.permissao).SingleOrDefault();
 
+                
+
                 var NovoDocumento = new TabDocumento();
                 NovoDocumento.cliente = cliente;
                 
@@ -104,22 +106,7 @@ namespace DataStoreWebAPI.Controllers
                 NovoDocumento.tabItemDocumento.Add(NovoItemDocumento);
 
                 this._dbContext.tabDocumento.Add(NovoDocumento);
-        
-                // ---------- tabelas de juncao ---------- //
-                var joinTableObj = new TabItemDocumentoObjeto();
-                joinTableObj.tabObjeto = obj;
-                joinTableObj.tabItemDocumento = NovoItemDocumento;
-
-                var joinTablePermissao = new TabItemDocumentoPermissao();
-                joinTablePermissao.tabPermissao = permissao;
-                joinTablePermissao.tabItemDocumento = NovoItemDocumento;
-
-                this._dbContext.Attach(joinTableObj);
-                this._dbContext.Entry(joinTableObj).State = EntityState.Added;                
-
-                this._dbContext.Attach(joinTablePermissao);
-                this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;  
-                
+               
                 this._dbContext.SaveChanges();
                 return Ok();
             }
@@ -157,18 +144,20 @@ namespace DataStoreWebAPI.Controllers
                         NovoItemDocumento.codigoDocumento = dto.codigoDocumento;
                         NovoItemDocumento.codigoObjeto = objeto.IdObjeto; // Id universal do objeto entre servidores
                         NovoItemDocumento.codigoPermissao = dto.codigoPermissao;
+                        this._dbContext.tabItemDocumento.Add(NovoItemDocumento);
 
                         // ---------- tabelas de juncao ---------- //
-                        var joinTableObj = new TabItemDocumentoObjeto();
+                       
+                       /* var joinTableObj = new TabItemDocumentoObjeto();
                         joinTableObj.tabObjeto = objeto;
                         joinTableObj.tabItemDocumento = NovoItemDocumento;
 
                         var joinTablePermissao = new TabItemDocumentoPermissao();
                         joinTablePermissao.tabPermissao = permissao;
                         joinTablePermissao.tabItemDocumento = NovoItemDocumento;
-
+*/
                         // ---------------------Attachments ---------------------------- //
-
+/*
                         this._dbContext.Attach(NovoItemDocumento);
                         this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
 
@@ -177,7 +166,7 @@ namespace DataStoreWebAPI.Controllers
 
                         this._dbContext.Attach(joinTablePermissao);
                         this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;
-
+*/
                         this._dbContext.SaveChanges();
                         return Ok();                   
                     }

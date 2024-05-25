@@ -8,14 +8,14 @@
         public int codigoObjeto {get; set;}
         
         public List<TabAvaliacao> avaliacao {get; set;} //
-        public List<TabItemDocumentoPermissao> permissao {get; set;} // tabela de juncao 
-        public List<TabItemDocumentoObjeto> objeto {get; set;} // tabela de juncao
+        //public List<TabItemDocumentoPermissao> permissao {get; set;} // tabela de juncao 
+        //public List<TabItemDocumentoObjeto> objeto {get; set;} // tabela de juncao
         
         public TabItemDocumento() 
         { 
-            this.permissao = new List<TabItemDocumentoPermissao>();
+            //this.permissao = new List<TabItemDocumentoPermissao>();
             this.avaliacao = new List<TabAvaliacao>();
-            this.objeto = new List<TabItemDocumentoObjeto>();
+            //this.objeto = new List<TabItemDocumentoObjeto>();
         }
     }
 }
