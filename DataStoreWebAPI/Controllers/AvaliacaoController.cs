@@ -92,9 +92,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpGet("visualiza-documentos-para-avaliar")]
         public IActionResult GetDocumentosParaAvaliar()
         {
-            var documentos = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
-                                                                   && td.isOpen 
-                                                                   && td.avaliador == null
+            var documentos = this._dbContext.tabDocumento.Where(td =>  td.avaliador == null
                                                                 ).ToList();
          
             var view_docs_disponiveis = 
@@ -128,7 +126,7 @@ namespace DataStoreWebAPI.Controllers
             if(avaliador != null)
             {
                 
-                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false && 
+                var documento = this._dbContext.tabDocumento.Where(td =>  
                                                                          td.avaliador == avaliador 
                                                                   ).ToList();
 
@@ -183,9 +181,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpPut("iniciar-avaliacao/{cod_documento}/{email_avaliador}")]
         public IActionResult PutIniciaAvaliacao(int cod_documento, string email_avaliador)
         {
-            var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
-                                                                   && td.isOpen 
-                                                                   && td.avaliador == null
+            var documento = this._dbContext.tabDocumento.Where(td => td.avaliador == null
                                                                    && td.codigoDocumento == cod_documento
                                                                 ).SingleOrDefault();
             if(documento != null)
@@ -211,9 +207,7 @@ namespace DataStoreWebAPI.Controllers
             var avaliador = this._dbContext.Users.Where(tu => tu.Email == dto.email_avaliador).SingleOrDefault();
             if(avaliador != null)
             {
-                var documento = this._dbContext.tabDocumento.Where(td => td.isCanceled == false 
-                                                                    && td.isOpen 
-                                                                    && td.avaliador == avaliador // importante, o avaliador x nao pode avaliar doc do avaliador y
+                var documento = this._dbContext.tabDocumento.Where(td => td.avaliador == avaliador // importante, o avaliador x nao pode avaliar doc do avaliador y
                                                                     && td.codigoDocumento == dto.codigoDocumento
                                                                     ).SingleOrDefault();
                 if(documento != null)

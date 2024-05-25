@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    [Migration("20240525135928_m5")]
-    partial class m5
+    [Migration("20240525150634_m7")]
+    partial class m7
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,9 +67,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<int>("codigoStatusDocumento")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("dataEmissao")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("dataSolicitacao")
                         .HasColumnType("datetime2");
 
@@ -79,12 +76,6 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<string>("idCliente")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("isCanceled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("isOpen")
-                        .HasColumnType("bit");
 
                     b.HasKey("codigoDocumento");
 
@@ -191,8 +182,9 @@ namespace DataStoreWebAPI.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("codigoStatus"));
 
-                    b.Property<int>("DescricaoStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("DescricaoStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("indAtivo")
                         .HasColumnType("int");

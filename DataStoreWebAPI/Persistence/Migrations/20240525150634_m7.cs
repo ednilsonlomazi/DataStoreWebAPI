@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class m5 : Migration
+    public partial class m7 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -89,7 +89,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                 {
                     codigoStatus = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DescricaoStatus = table.Column<int>(type: "int", nullable: false),
+                    DescricaoStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     indAtivo = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -212,10 +212,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     idCliente = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     idAvaliador = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     codigoStatusDocumento = table.Column<int>(type: "int", nullable: false),
-                    isOpen = table.Column<bool>(type: "bit", nullable: false),
-                    isCanceled = table.Column<bool>(type: "bit", nullable: false),
-                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    dataEmissao = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    dataSolicitacao = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

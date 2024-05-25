@@ -89,28 +89,49 @@ namespace DataStoreWebAPI.Controllers
             if(cliente != null)
             {
                 var obj = this._dbContext.tabObjeto.Where(to => to.serverName == dto.server_name &&
-                                                          to.DatabaseName == dto.database_name &&
-                                                          to.ObjectName == dto.object_name).SingleOrDefault();
+                                                        to.DatabaseName == dto.database_name &&
+                                                        to.ObjectName == dto.object_name).SingleOrDefault();
 
                 var permissao = this._dbContext.tabPermissao.Where(tp => tp.descricaoPermissao == dto.permissao).SingleOrDefault();
 
-                
+                if(obj != null && permissao != null)
+                {
+                    var NovoItemDocumento = new TabItemDocumento();
+                    NovoItemDocumento.codigoObjeto = obj.IdObjeto;
+                    NovoItemDocumento.codigoPermissao = permissao.codigoPermissao;
 
-                var NovoDocumento = new TabDocumento();
-                NovoDocumento.cliente = cliente;
-                
-                var NovoItemDocumento = new TabItemDocumento();
-                NovoItemDocumento.codigoObjeto = obj.IdObjeto;
-                NovoItemDocumento.codigoPermissao = permissao.codigoPermissao;
+                    var docAberto = this._dbContext.tabDocumento.Where(td => td.idCliente == cliente.Id && td.codigoStatusDocumento == 1).SingleOrDefault();
+                    if(docAberto == null)
+                    {
+                        var tabstatus = this._dbContext.tabStatusDocumentos.Where(tsd => tsd.codigoStatus == 1).SingleOrDefault();
 
-                NovoDocumento.tabItemDocumento.Add(NovoItemDocumento);
+                        var NovoDocumento = new TabDocumento();
+                        NovoDocumento.cliente = cliente;
+                        NovoDocumento.tabStatusDocumento = tabstatus;
+                        
+                        NovoDocumento.tabItemDocumento.Add(NovoItemDocumento);
 
-                this._dbContext.tabDocumento.Add(NovoDocumento);
-               
-                this._dbContext.SaveChanges();
-                return Ok();
+                        //this._dbContext.tabDocumento.Add(NovoDocumento);
+                        this._dbContext.Attach(NovoDocumento);
+                        this._dbContext.Entry(NovoDocumento).State = EntityState.Added;
+                        this._dbContext.SaveChanges();
+                        return Ok();
+                    } 
+                    var itemDocumento = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == docAberto.codigoDocumento &&
+                                                                               tid.codigoObjeto == obj.IdObjeto && // muito importante essa parte
+                                                                               tid.codigoPermissao == permissao.codigoPermissao).SingleOrDefault();
+                    if(itemDocumento == null)
+                    {
+                        docAberto.tabItemDocumento.Add(NovoItemDocumento);
+                        this._dbContext.Update(docAberto);
+                        this._dbContext.SaveChanges();
+                        return Ok();
+                    }
+                    return BadRequest("Você ja fez essa solicitacao");
+                } 
+                return BadRequest("Objetos ou permissao inválidos");               
             }
-            return NotFound();
+            return NotFound("Cliente não encontrado");
             
         }
 
@@ -119,7 +140,7 @@ namespace DataStoreWebAPI.Controllers
         {
             var documento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == dto.codigoDocumento).SingleOrDefault(); 
             
-            if (documento != null && documento.isOpen) 
+            if (documento != null) 
             {
                 
 
@@ -146,27 +167,7 @@ namespace DataStoreWebAPI.Controllers
                         NovoItemDocumento.codigoPermissao = dto.codigoPermissao;
                         this._dbContext.tabItemDocumento.Add(NovoItemDocumento);
 
-                        // ---------- tabelas de juncao ---------- //
                        
-                       /* var joinTableObj = new TabItemDocumentoObjeto();
-                        joinTableObj.tabObjeto = objeto;
-                        joinTableObj.tabItemDocumento = NovoItemDocumento;
-
-                        var joinTablePermissao = new TabItemDocumentoPermissao();
-                        joinTablePermissao.tabPermissao = permissao;
-                        joinTablePermissao.tabItemDocumento = NovoItemDocumento;
-*/
-                        // ---------------------Attachments ---------------------------- //
-/*
-                        this._dbContext.Attach(NovoItemDocumento);
-                        this._dbContext.Entry(NovoItemDocumento).State = EntityState.Added;
-
-                        this._dbContext.Attach(joinTableObj);
-                        this._dbContext.Entry(joinTableObj).State = EntityState.Added;
-
-                        this._dbContext.Attach(joinTablePermissao);
-                        this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;
-*/
                         this._dbContext.SaveChanges();
                         return Ok();                   
                     }
@@ -193,40 +194,6 @@ namespace DataStoreWebAPI.Controllers
 
         }
 
-
-        [HttpPut("atualizar-solicitacao/{cod}")]
-        public IActionResult UpdateDocumento(int cod, TabDocumento tabDocumentoInput)
-        {
-            var tabDocumento = this._dbContext.tabDocumento.SingleOrDefault(t => t.codigoDocumento == cod);
-
-            if (tabDocumento != null) 
-            {
-                tabDocumento.AtualizarDocumento(tabDocumentoInput.isOpen, tabDocumentoInput.dataEmissao);
-
-                this._dbContext.tabDocumento.Update(tabDocumento);
-               
-                this._dbContext.SaveChanges();
-
-                return Ok(tabDocumento);
-            }
-
-            return NoContent();
-        }
-
-        [HttpDelete("cancelar-solicitacao/{cod}")]
-        public IActionResult CancelarSolicitacao(int cod)
-        {
-            var tabDocumento = this._dbContext.tabDocumento.SingleOrDefault(t => t.codigoDocumento == cod);
-
-            if (tabDocumento != null) 
-            {
-                tabDocumento.CancelarDocumento();
-                this._dbContext.SaveChanges();
-                return Ok();
-            }
-
-            return NoContent();
-        }
 
     }
 }

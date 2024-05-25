@@ -4,13 +4,13 @@ namespace DataStoreWebAPI.Entities
     {
 
         public int codigoStatus {get; set;}
-        public int DescricaoStatus {get; set;}
+        public string DescricaoStatus {get; set;}
         public int indAtivo {get; set;}
          
 
         public TabStatusDocumento()
         {
-            this.indAtivo = 1;
+             
              
         }
     }

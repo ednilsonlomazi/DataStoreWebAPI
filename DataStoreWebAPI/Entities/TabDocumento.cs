@@ -22,32 +22,18 @@ namespace DataStoreWebAPI.Entities
         public TabStatusDocumento tabStatusDocumento {get; set;}
         public IdentityUser cliente { get; set; }    
         public IdentityUser? avaliador { get; set; } 
-        public bool isOpen { get; set; }
-        public bool isCanceled { get; set; }
         public DateTime dataSolicitacao { get; set; }
-        public DateTime dataEmissao { get; set; }
         public List<TabItemDocumento> tabItemDocumento { get; set; } // foreigh key to item de documento
 
         public TabDocumento()
         {
             
             this.dataSolicitacao = DateTime.Now;
-            this.isOpen = true;
-            this.isCanceled = false;
             this.tabItemDocumento = new List<TabItemDocumento>();
             
 
         }
 
-        public void AtualizarDocumento(bool isOpen, DateTime dataEmissao)
-        {
-            this.isOpen = isOpen;
-            this.dataEmissao = dataEmissao;
-        }
-
-        public void CancelarDocumento()
-        {
-            this.isCanceled = true;
-        }
+        
     }
 }

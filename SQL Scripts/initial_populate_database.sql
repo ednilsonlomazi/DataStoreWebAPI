@@ -34,3 +34,12 @@ INSERT INTO dbdatastore.dbo.tabPermissao
 SELECT DISTINCT fnp.[permission_name],
 				fnp.class_desc
 FROM sys.fn_builtin_permissions('OBJECT') fnp
+
+
+INSERT INTO dbdatastore.dbo.tabStatusDocumentos
+(DescricaoStatus, indAtivo)
+VALUES
+('ABERTO', 1),
+('FECHADO', 1),
+('EM AVALIACAO', 1),
+('AVALIADO', 1)
