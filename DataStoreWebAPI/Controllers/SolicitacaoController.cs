@@ -134,51 +134,27 @@ namespace DataStoreWebAPI.Controllers
             return NotFound("Cliente não encontrado");
             
         }
-
-        [HttpPost("adicionar-item-solicitacao")]
-        public IActionResult PostAdicionarItemSolicitacao(ItemDocumentoDto dto)
-        {
-            var documento = this._dbContext.tabDocumento.Where(t => t.codigoDocumento == dto.codigoDocumento).SingleOrDefault(); 
-            
-            if (documento != null) 
-            {
-                
-
-                // ----------- endpoints ------------ //
-                var objeto = this._dbContext.tabObjeto.Where(to => to.serverName == dto.serverName && 
-                                                             to.codigoBancoDados == dto.codigoBancoDados &&
-                                                             to.codigoObjeto == dto.codigoObjeto
-                                                            ).SingleOrDefault();
-                
-                var permissao = this._dbContext.tabPermissao.Where(tp => tp.codigoPermissao == dto.codigoPermissao).SingleOrDefault();
-
-                if(objeto != null && permissao != null)
-                {
-                    var itemDocumento = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == dto.codigoDocumento &&
-                                                                               tid.codigoObjeto == objeto.IdObjeto && // muito importante essa parte
-                                                                               tid.codigoPermissao == dto.codigoPermissao).SingleOrDefault();
-                    if(itemDocumento == null)
-                    {
-                        // ----------------Config Item Doc ------------------ //
-
-                        var NovoItemDocumento = new TabItemDocumento();
-                        NovoItemDocumento.codigoDocumento = dto.codigoDocumento;
-                        NovoItemDocumento.codigoObjeto = objeto.IdObjeto; // Id universal do objeto entre servidores
-                        NovoItemDocumento.codigoPermissao = dto.codigoPermissao;
-                        this._dbContext.tabItemDocumento.Add(NovoItemDocumento);
-
-                       
-                        this._dbContext.SaveChanges();
-                        return Ok();                   
-                    }
-                    return BadRequest("Você já fez essa solicitacao");
-
  
+        [HttpPut("concluir-solicitacao/{email_cliente}")]
+        public IActionResult PutConcluirSolicitacao(string email_cliente)
+        {
+
+            var cliente = this._dbContext.Users.Where(u => u.Email == email_cliente).SingleOrDefault();
+            if(cliente != null)
+            {
+                var docAberto = this._dbContext.tabDocumento.Where(doc => doc.codigoStatusDocumento == 1 && doc.idCliente == cliente.Id).SingleOrDefault();
+                if(docAberto != null)
+                {
+                    docAberto.codigoStatusDocumento = 2;
+                    this._dbContext.Update(docAberto);
+                    this._dbContext.SaveChanges();
+                    return Ok();
                 }
-                return BadRequest("Item de documento Invalido");
+                return NotFound("Nao foi encontrado documento aberto para o cliente");
             }
-            return BadRequest("Documento Inválido");
-        }
+            return NotFound("Cliente nao encontrado");
+
+        }        
 
         [HttpGet("solicitacao-realizada/{cod}")]
         public IActionResult GetSolicitacaoRealizada(int cod)

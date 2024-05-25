@@ -92,8 +92,7 @@ namespace DataStoreWebAPI.Controllers
         [HttpGet("visualiza-documentos-para-avaliar")]
         public IActionResult GetDocumentosParaAvaliar()
         {
-            var documentos = this._dbContext.tabDocumento.Where(td =>  td.avaliador == null
-                                                                ).ToList();
+            var documentos = this._dbContext.tabDocumento.Where(td =>  td.codigoStatusDocumento == 2).ToList();
          
             var view_docs_disponiveis = 
             (
@@ -190,6 +189,7 @@ namespace DataStoreWebAPI.Controllers
                 if(avaliador != null)
                 {
                     documento.avaliador = avaliador;
+                    documento.codigoStatusDocumento = 3;
                     this._dbContext.tabDocumento.Update(documento);
                     this._dbContext.SaveChanges();
                     return Ok();
@@ -240,6 +240,37 @@ namespace DataStoreWebAPI.Controllers
             return BadRequest("Avaliador Inválido");
                                                             
         }                
+
+        // finalizar uma avaliacao
+        [HttpPut("finalizar-avaliacao/{cod_documento}/{email_avaliador}")]
+        public IActionResult PutFinalizarAvaliacao(int cod_documento, string email_avaliador)
+        {
+            var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
+            if(avaliador != null)
+            {
+                var documento = this._dbContext.tabDocumento.Where(td => td.idAvaliador == avaliador.Id
+                                                                   && td.codigoDocumento == cod_documento
+                                                                ).SingleOrDefault();
+                if(documento != null)
+                {
+                    var idocs = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == documento.codigoDocumento).ToList();
+                    foreach (TabItemDocumento item in idocs)
+                    {
+                        if(item.avaliacao.Count == 0)
+                        {
+                            return BadRequest("Ainda existem itens para avaliar");
+                        }                        
+                    };
+                    documento.codigoStatusDocumento = 4;
+                    this._dbContext.Update(documento);
+                    this._dbContext.SaveChanges();
+                    return Ok();
+                }
+                return NotFound("Este documento eh invalido ou nao pertence a este avaliador");
+            }
+            return NotFound("Avaliador Invalido");
+
+        }        
 
    
 
