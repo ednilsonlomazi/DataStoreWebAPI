@@ -35,6 +35,59 @@ namespace DataStoreWebAPI.Controllers
         }
 
 
+        // retorna todos os documentos de um avaliador
+        [HttpGet("visualiza-documentos-avaliador/{email_avaliador}")]
+        public IActionResult GetDocumentosAvaliador(string email_avaliador)
+        {
+            var avaliador = this._dbContext.Users.Where(u => u.Email == email_avaliador).SingleOrDefault();
+            if(avaliador != null)
+            {
+                var documentos = this._dbContext.tabDocumento.Where(td => td.idCliente == avaliador.Id).ToList();
+                var view_item_doc = 
+                (
+                    from doc in documentos
+
+                        join idoc in this._dbContext.tabItemDocumento
+                            on doc.codigoDocumento equals idoc.codigoDocumento
+                        
+                        join obj in this._dbContext.tabObjeto
+                            on idoc.codigoObjeto equals obj.IdObjeto
+
+                        join permissao in this._dbContext.tabPermissao
+                            on idoc.codigoPermissao equals permissao.codigoPermissao
+
+                        join cliente in this._dbContext.Users // left join em avaliador
+                            on doc.idCliente equals cliente.Id into tmp_cli from tmp in tmp_cli.DefaultIfEmpty()
+
+                        join ta in this._dbContext.tabAvaliacao // left join avaliacao
+                            on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
+                            new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                        
+                    select new 
+                    {
+                        cod_doc = doc.codigoDocumento,
+                        cod_item_doc = idoc.codigoItemDocumento,
+                        TipoObjeto = obj.descricaoTipoObjeto,
+                        NomeObjeto = obj.ObjectName,
+                        Database = obj.DatabaseName,
+                        Servidor = obj.serverName,
+                        Permissao = permissao.descricaoPermissao,
+                        DtaAbertura = doc.dataSolicitacao,
+                        Cliente = tmp.UserName,
+                        ResultadoAvaliacao = left_ta?.resultado
+                        
+                    }
+                ); 
+                if(view_item_doc != null)
+                {
+                    return Ok(view_item_doc);
+                }
+                return NotFound("Não foi encontrado documentos");
+            }
+            return BadRequest("Avalliador invalido");
+        }     
+
+
         // retorna todos documentos passiveis de avaliacao
         [HttpGet("visualiza-documentos-para-avaliar")]
         public IActionResult GetDocumentosParaAvaliar()
@@ -65,58 +118,7 @@ namespace DataStoreWebAPI.Controllers
             return NotFound();
         }
 
-
-        // retorna a visualização dos itens do documento
-        [HttpGet("visualiza-itens-documento/{codigo_documento}")]
-        public IActionResult GetItensDocumento(int codigo_documento)
-        {
-            var itensDoc = this._dbContext.tabItemDocumento.Where(td => td.codigoDocumento == codigo_documento 
-                                                                ).ToList();
-    
-            var view_item_doc = 
-            (
-                from idoc in itensDoc
-                    
-                    join obj in this._dbContext.tabObjeto
-                        on idoc.codigoObjeto equals obj.IdObjeto
-
-                    join permissao in this._dbContext.tabPermissao
-                        on idoc.codigoPermissao equals permissao.codigoPermissao
-
-                    join doc in this._dbContext.tabDocumento 
-                        on idoc.codigoDocumento equals doc.codigoDocumento
-    
-                    join cliente in this._dbContext.Users
-                        on doc.idCliente equals cliente.Id
-
-                    join avaliador in this._dbContext.Users // left join em avaliador
-                        on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
-
-                    join ta in this._dbContext.tabAvaliacao // left join avaliacao
-                        on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
-                           new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
-                    
-                select new 
-                {
-                    cod_item_doc = idoc.codigoItemDocumento,
-                    TipoObjeto = obj.descricaoTipoObjeto,
-                    NomeObjeto = obj.ObjectName,
-                    Database = obj.DatabaseName,
-                    Servidor = obj.serverName,
-                    Permissao = permissao.descricaoPermissao,
-                    Cliente = cliente.UserName,
-                    Avaliador = tmp?.UserName,
-                    ResultadoAvaliacao = left_ta?.resultado
-                     
-                }
-            ); 
-            
-            if(view_item_doc != null)
-            {
-                return Ok(view_item_doc);
-            }
-            return NotFound();
-        }        
+  
 
         // retorna uma visao de todos os itens avaliados pelo avaliador
         [HttpGet("visualizar-itens-avaliados/{email_avaliador}")]

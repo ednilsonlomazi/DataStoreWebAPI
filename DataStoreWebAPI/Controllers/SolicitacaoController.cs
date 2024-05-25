@@ -26,35 +26,100 @@ namespace DataStoreWebAPI.Controllers
         }
 
 
-        // retorna todos as solicitacoes de acesso do cliente
-        [HttpGet("solicitacoes-cliente/{email_cliente}")]
-        public IActionResult GetSolicitacoesCliente(string email_cliente)
+
+        // retorna todos os documentos de um cliente
+        [HttpGet("visualiza-documentos-cliente/{email_cliente}")]
+        public IActionResult GetDocumentosCliente(string email_cliente)
         {
-            var tabDocumento = this._dbContext.tabDocumento.Where(td => td.cliente.Email == email_cliente).SingleOrDefault();
-
-            if (tabDocumento != null)
+            var cliente = this._dbContext.Users.Where(u => u.Email == email_cliente).SingleOrDefault();
+            if(cliente != null)
             {
-                return Ok(tabDocumento);
-            };
+                var documentos = this._dbContext.tabDocumento.Where(td => td.idCliente == cliente.Id).ToList();
+                var view_item_doc = 
+                (
+                    from doc in documentos
 
-            return NotFound();
+                        join idoc in this._dbContext.tabItemDocumento
+                            on doc.codigoDocumento equals idoc.codigoDocumento
+                        
+                        join obj in this._dbContext.tabObjeto
+                            on idoc.codigoObjeto equals obj.IdObjeto
 
-        }
+                        join permissao in this._dbContext.tabPermissao
+                            on idoc.codigoPermissao equals permissao.codigoPermissao
+
+                        join avaliador in this._dbContext.Users // left join em avaliador
+                            on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
+
+                        join ta in this._dbContext.tabAvaliacao // left join avaliacao
+                            on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
+                            new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                        
+                    select new 
+                    {
+                        cod_doc = doc.codigoDocumento,
+                        cod_item_doc = idoc.codigoItemDocumento,
+                        TipoObjeto = obj.descricaoTipoObjeto,
+                        NomeObjeto = obj.ObjectName,
+                        Database = obj.DatabaseName,
+                        Servidor = obj.serverName,
+                        Permissao = permissao.descricaoPermissao,
+                        DtaAbertura = doc.dataSolicitacao,
+                        Avaliador = tmp?.UserName,
+                        ResultadoAvaliacao = left_ta?.resultado
+                        
+                    }
+                ); 
+                if(view_item_doc != null)
+                {
+                    return Ok(view_item_doc);
+                }
+                return NotFound("Não foram encontrado documentos");
+            }
+            return BadRequest("Cliente invalido");
+        }       
 
         // cria uma solicitacao de acesso
-        [HttpPost("realizar-solicitacao")]
-        public IActionResult PostRealizarSolicitacao(DocumentoDto dto)
+        // diferentemente do add item...
+        [HttpPost("criar-solicitacao")]
+        public IActionResult PostCriarSolicitacao(SolicitacaoDto dto)
         {
             // o dbset do identityuser eh public virtual IDbSet<TUser> Users { get; set; }
             var cliente = this._dbContext.Users.Where(tu => tu.Email == dto.email_cliente).SingleOrDefault();
             if(cliente != null)
             {
-                
+                var obj = this._dbContext.tabObjeto.Where(to => to.serverName == dto.server_name &&
+                                                          to.DatabaseName == dto.database_name &&
+                                                          to.ObjectName == dto.object_name).SingleOrDefault();
+
+                var permissao = this._dbContext.tabPermissao.Where(tp => tp.descricaoPermissao == dto.permissao).SingleOrDefault();
+
                 var NovoDocumento = new TabDocumento();
                 NovoDocumento.cliente = cliente;
+                
+                var NovoItemDocumento = new TabItemDocumento();
+                NovoItemDocumento.codigoObjeto = obj.IdObjeto;
+                NovoItemDocumento.codigoPermissao = permissao.codigoPermissao;
 
-                this._dbContext.tabDocumento.Attach(NovoDocumento);
-                this._dbContext.Entry(NovoDocumento).State = EntityState.Added;
+                NovoDocumento.tabItemDocumento.Add(NovoItemDocumento);
+
+                this._dbContext.tabDocumento.Add(NovoDocumento);
+        
+                // ---------- tabelas de juncao ---------- //
+                var joinTableObj = new TabItemDocumentoObjeto();
+                joinTableObj.tabObjeto = obj;
+                joinTableObj.tabItemDocumento = NovoItemDocumento;
+
+                var joinTablePermissao = new TabItemDocumentoPermissao();
+                joinTablePermissao.tabPermissao = permissao;
+                joinTablePermissao.tabItemDocumento = NovoItemDocumento;
+
+                this._dbContext.Attach(joinTableObj);
+                this._dbContext.Entry(joinTableObj).State = EntityState.Added;                
+
+                this._dbContext.Attach(joinTablePermissao);
+                this._dbContext.Entry(joinTablePermissao).State = EntityState.Added;  
+                
                 this._dbContext.SaveChanges();
                 return Ok();
             }
