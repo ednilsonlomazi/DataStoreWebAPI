@@ -158,36 +158,22 @@ namespace DataStoreWebAPI.Controllers
 
         }      
 
-        [HttpPut("adicionar-recurso-avaliacao/{email_cliente}")]
-        public IActionResult PutConcluirSolicitacao(string email_cliente, int cod_doc, int cod_idoc)
+        [HttpPost("adicionar-recurso-avaliacao")]
+        public IActionResult PostAdicionarRecursoAvaliacao(RecursoAvaliacaoDto dto)
         {
-
-            var cliente = this._dbContext.Users.Where(u => u.Email == email_cliente).SingleOrDefault();
+            var cliente = this._dbContext.Users.Where(u => u.Email == dto.email_cliente).SingleOrDefault();
             if(cliente != null)
             {
-                var docAvaliado = this._dbContext.tabDocumento.Where(doc => doc.codigoStatusDocumento == 4 && 
-                                                                   doc.idCliente == cliente.Id).SingleOrDefault();
-                if(docAvaliado != null)
+                var avaliacao = this._dbContext.tabAvaliacao.Where(ta => ta.codigoAvaliacao == dto.codigoAvaliacao).SingleOrDefault();
+                if(avaliacao != null)
                 {
-                    var itemDocAvaliado = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == docAvaliado.codigoDocumento && 
-                                                                                        tid.codigoItemDocumento == cod_idoc).SingleOrDefault();
-                    if(itemDocAvaliado != null && itemDocAvaliado.avaliacao.Count > 0)
-                    {
-                        TabAvaliacao ta = itemDocAvaliado.avaliacao.LastOrDefault();
-                        if(ta != null)
-                        {
-                            TabRecursoAvaliacao tra = new TabRecursoAvaliacao();
-                            ta.tabRecursoAvaliacao.Add(tra);
-                            this._dbContext.tabRecursoAvaliacao.Add(tra);
-                            this._dbContext.Update(ta);
-                            this._dbContext.SaveChanges();
-                            return Ok();
-                        }
-                        return NotFound("Algo de errado com a última avaliacao");
-                    }
-                    return NotFound("Item nao foi avaliado ainda");
+                    TabRecursoAvaliacao tra = new TabRecursoAvaliacao();
+                    tra.descricaoRecurso = dto.descRecurso;
+                    avaliacao.tabRecursoAvaliacao.Add(tra);
+                    this._dbContext.SaveChanges();
+                    return Ok();
                 }
-                return NotFound("Nao foi encontrado documento avaliado");
+                return NotFound("Avalicacao nao encontrada");
             }
             return NotFound("Cliente nao encontrado");
         }                

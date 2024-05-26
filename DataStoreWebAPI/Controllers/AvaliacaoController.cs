@@ -42,7 +42,7 @@ namespace DataStoreWebAPI.Controllers
             var avaliador = this._dbContext.Users.Where(u => u.Email == email_avaliador).SingleOrDefault();
             if(avaliador != null)
             {
-                var documentos = this._dbContext.tabDocumento.Where(td => td.idCliente == avaliador.Id).ToList();
+                var documentos = this._dbContext.tabDocumento.Where(td => td.idAvaliador == avaliador.Id).ToList();
                 var view_item_doc = 
                 (
                     from doc in documentos
