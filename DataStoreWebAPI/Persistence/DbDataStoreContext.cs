@@ -20,8 +20,7 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabPermissao> tabPermissao { get; set; }
         public DbSet<TabAvaliacao> tabAvaliacao { get; set; }       
         public DbSet<TabStatusDocumento> tabStatusDocumentos {get; set;}
-        //public DbSet<TabItemDocumentoPermissao> tabItemDocumentoPermissao { get; set; }    
-        //public DbSet<TabItemDocumentoObjeto> tabItemDocumentoObjeto {get; set;}
+        public DbSet<TabRecursoAvaliacao> tabRecursoAvaliacao {get; set;}
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -81,8 +80,6 @@ namespace DataStoreWebAPI.Persistence
                 
             });
 
-           
-
             modelBuilder.Entity<TabDocumento>(e => {
 
                 e.HasKey(td => td.codigoDocumento); // 
@@ -92,12 +89,12 @@ namespace DataStoreWebAPI.Persistence
                 e.HasOne(td => td.tabStatusDocumento).WithMany().HasForeignKey(tsd => tsd.codigoStatusDocumento);            
             });
 
-
-
-            // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- //
             modelBuilder.Entity<TabAvaliacao>(e => {
 
                 e.HasKey(ta => ta.codigoAvaliacao);
+                e.HasMany(ta => ta.tabRecursoAvaliacao)
+                 .WithOne()
+                 .HasForeignKey(tr => tr.codigoAvaliacao);
 
             });
 
@@ -106,6 +103,12 @@ namespace DataStoreWebAPI.Persistence
                 e.HasKey(ta => ta.codigoStatus);
 
             });
+
+            modelBuilder.Entity<TabRecursoAvaliacao>(e => {
+
+                e.HasKey(ta => ta.codigoRecursoAvaliacao);
+
+            });            
 
 
 

@@ -135,6 +135,8 @@ namespace DataStoreWebAPI.Controllers
             
         }
  
+
+
         [HttpPut("concluir-solicitacao/{email_cliente}")]
         public IActionResult PutConcluirSolicitacao(string email_cliente)
         {
@@ -154,7 +156,41 @@ namespace DataStoreWebAPI.Controllers
             }
             return NotFound("Cliente nao encontrado");
 
-        }        
+        }      
+
+        [HttpPut("adicionar-recurso-avaliacao/{email_cliente}")]
+        public IActionResult PutConcluirSolicitacao(string email_cliente, int cod_doc, int cod_idoc)
+        {
+
+            var cliente = this._dbContext.Users.Where(u => u.Email == email_cliente).SingleOrDefault();
+            if(cliente != null)
+            {
+                var docAvaliado = this._dbContext.tabDocumento.Where(doc => doc.codigoStatusDocumento == 4 && 
+                                                                   doc.idCliente == cliente.Id).SingleOrDefault();
+                if(docAvaliado != null)
+                {
+                    var itemDocAvaliado = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == docAvaliado.codigoDocumento && 
+                                                                                        tid.codigoItemDocumento == cod_idoc).SingleOrDefault();
+                    if(itemDocAvaliado != null && itemDocAvaliado.avaliacao.Count > 0)
+                    {
+                        TabAvaliacao ta = itemDocAvaliado.avaliacao.LastOrDefault();
+                        if(ta != null)
+                        {
+                            TabRecursoAvaliacao tra = new TabRecursoAvaliacao();
+                            ta.tabRecursoAvaliacao.Add(tra);
+                            this._dbContext.tabRecursoAvaliacao.Add(tra);
+                            this._dbContext.Update(ta);
+                            this._dbContext.SaveChanges();
+                            return Ok();
+                        }
+                        return NotFound("Algo de errado com a última avaliacao");
+                    }
+                    return NotFound("Item nao foi avaliado ainda");
+                }
+                return NotFound("Nao foi encontrado documento avaliado");
+            }
+            return NotFound("Cliente nao encontrado");
+        }                
 
         [HttpGet("solicitacao-realizada/{cod}")]
         public IActionResult GetSolicitacaoRealizada(int cod)
