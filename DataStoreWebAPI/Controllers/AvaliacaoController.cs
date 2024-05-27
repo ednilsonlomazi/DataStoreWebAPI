@@ -270,7 +270,38 @@ namespace DataStoreWebAPI.Controllers
             }
             return NotFound("Avaliador Invalido");
 
-        }        
+        }   
+
+        // retorna todos documentos passiveis de avaliacao
+        [HttpPut("analisar-recurso-avaliacao/{resultado_analise}")]
+        public IActionResult PutAnalisarRecursoAvaliacao(bool resultado_analise, int cod_recurso)
+        {
+            var recurso = this._dbContext.tabRecursoAvaliacao.Where(tra => tra.codigoRecursoAvaliacao == cod_recurso).SingleOrDefault();
+            if(recurso != null)
+            {
+                var avaliacao = this._dbContext.tabAvaliacao.Where(ta => ta.codigoAvaliacao == recurso.codigoAvaliacao).FirstOrDefault();
+                if(avaliacao != null)
+                {
+                    var doc = this._dbContext.tabDocumento.Where(tid => tid.codigoDocumento == avaliacao.codigoDocumento).SingleOrDefault();
+                    if(doc != null)
+                    {
+                        recurso.analiseRecurso = resultado_analise;
+                        this._dbContext.Update(recurso);
+                        if(resultado_analise)
+                        {
+                            doc.codigoStatusDocumento = 2;
+                            this._dbContext.Update(doc);
+                        }
+                        this._dbContext.SaveChanges();
+                        return Ok();
+                    }
+                    return NotFound("Nao foi encontrado o documento dessa avaliacao");        
+                }
+                return NotFound("Nao foi encontrada a avaliacao deste recurso");
+            }
+            return NotFound("Este recurso eh invalido");
+        }
+
 
    
 
