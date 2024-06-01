@@ -247,6 +247,8 @@ namespace DataStoreWebAPI.Controllers
         }                
 
         // finalizar uma avaliacao
+        // VOLTAR AQUI POIS SO POSSO FINALIZAR ISSO CASO O ITEM COM RECURSO TENHA UMA AVALIACAO POSTERIOR AO RECURSO
+        // E SE CLARO RECURSO APROVADO
         [HttpPut("finalizar-avaliacao/{cod_documento}/{email_avaliador}")]
         public IActionResult PutFinalizarAvaliacao(int cod_documento, string email_avaliador)
         {
@@ -270,11 +272,22 @@ namespace DataStoreWebAPI.Controllers
                         //
 
                         // Eager load
-                        var avaliacoes = this._dbContext.tabAvaliacao.Where(ta => ta.codigoDocumento == item.codigoDocumento && ta.codigoItemDocumento == item.codigoItemDocumento).SingleOrDefault();
-                        if(avaliacoes == null)
+                        var ultimaAva = this._dbContext.tabAvaliacao.Where(ta => ta.codigoDocumento == item.codigoDocumento && 
+                                                                                  ta.codigoItemDocumento == item.codigoItemDocumento)
+                                                                     .OrderByDescending(ta => ta.dtaAvaliacao)
+                                                                     .Take(1)
+                                                                     .SingleOrDefault();
+                        if(ultimaAva == null)
                         {
                             return BadRequest("Ainda existem items que nao foram avaliados");
-                        }                        
+                        }
+                        var recava = this._dbContext.tabRecursoAvaliacao.Where(tra => tra.codigoAvaliacao == ultimaAva.codigoAvaliacao && 
+                                                                                      tra.analiseRecurso)
+                                                                        .SingleOrDefault();
+                        if(recava != null)
+                        {
+                            return BadRequest("Um item de documento com recurso aprovado ainda nao foi reavaliado");
+                        }
                     };
                     documento.codigoStatusDocumento = 4;
                     this._dbContext.Update(documento);
@@ -305,7 +318,7 @@ namespace DataStoreWebAPI.Controllers
                         this._dbContext.Update(recurso);
                         if(resultado_analise)
                         {
-                            doc.codigoStatusDocumento = 2;
+                            doc.codigoStatusDocumento = 3;
                             this._dbContext.Update(doc);
                         }
                         this._dbContext.SaveChanges();

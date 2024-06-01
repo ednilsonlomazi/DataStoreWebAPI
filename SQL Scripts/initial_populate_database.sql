@@ -39,7 +39,9 @@ FROM sys.fn_builtin_permissions('OBJECT') fnp
 INSERT INTO dbdatastore.dbo.tabStatusDocumentos
 (DescricaoStatus, indAtivo)
 VALUES
-('ABERTO', 1),
-('FECHADO', 1),
+('ABERTO', 1), 
+('ENVIADO', 1),
 ('EM AVALIACAO', 1),
-('AVALIADO', 1)
+('AVALIADO', 1),
+('FECHADO', 1),
+('CANCELADO', 1)
