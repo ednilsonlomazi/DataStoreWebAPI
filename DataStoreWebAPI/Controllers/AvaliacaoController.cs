@@ -235,7 +235,7 @@ namespace DataStoreWebAPI.Controllers
                         //this._dbContext.Entry(NovaAvaliacao).State = EntityState.Added;
 
                         this._dbContext.SaveChanges();
-                        return Ok();
+                        return Ok(item);
 
                     }
                     return NotFound("Item de documento Inválido");
@@ -261,9 +261,19 @@ namespace DataStoreWebAPI.Controllers
                     var idocs = this._dbContext.tabItemDocumento.Where(tid => tid.codigoDocumento == documento.codigoDocumento).ToList();
                     foreach (TabItemDocumento item in idocs)
                     {
-                        if(item.avaliacao.Count == 0)
+                        // recurso LAZY LOAD nao esta ativado nessa api, entao nao pode usar
+                        //
+                        //if(item.avaliacao.Count == 0)
+                        //{
+                        //    return BadRequest("Ainda existem items que nao foram avaliados");
+                        //}
+                        //
+
+                        // Eager load
+                        var avaliacoes = this._dbContext.tabAvaliacao.Where(ta => ta.codigoDocumento == item.codigoDocumento && ta.codigoItemDocumento == item.codigoItemDocumento).SingleOrDefault();
+                        if(avaliacoes == null)
                         {
-                            return BadRequest(item);
+                            return BadRequest("Ainda existem items que nao foram avaliados");
                         }                        
                     };
                     documento.codigoStatusDocumento = 4;
@@ -276,6 +286,7 @@ namespace DataStoreWebAPI.Controllers
             return NotFound("Avaliador Invalido");
 
         }   
+           
 
         // retorna todos documentos passiveis de avaliacao
         [HttpPut("analisar-recurso-avaliacao/{resultado_analise}")]
