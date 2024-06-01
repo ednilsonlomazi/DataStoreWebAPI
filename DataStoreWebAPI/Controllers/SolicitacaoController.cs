@@ -35,6 +35,9 @@ namespace DataStoreWebAPI.Controllers
             if(cliente != null)
             {
                 var documentos = this._dbContext.tabDocumento.Where(td => td.idCliente == cliente.Id).ToList();
+
+ 
+
                 var view_item_doc = 
                 (
                     from doc in documentos
@@ -51,10 +54,13 @@ namespace DataStoreWebAPI.Controllers
                         join avaliador in this._dbContext.Users // left join em avaliador
                             on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
 
-                        join ta in this._dbContext.tabAvaliacao // left join avaliacao
-                            on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
-                            new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
-                        
+                        // PRECISO VOLTAR NESSE OUTER APPLY QUE NAO ESTA FUNCIONANDO
+                        from a in this._dbContext.tabAvaliacao.Where(a => a.codigoDocumento == idoc.codigoDocumento && 
+                                                                     a.codigoItemDocumento == idoc.codigoItemDocumento)
+                                                              .OrderByDescending(a => a.dtaAvaliacao)
+                                                              .Take(1)
+                                                              .DefaultIfEmpty()
+
                     select new 
                     {
                         cod_doc = doc.codigoDocumento,
@@ -66,8 +72,7 @@ namespace DataStoreWebAPI.Controllers
                         Permissao = permissao.descricaoPermissao,
                         DtaAbertura = doc.dataSolicitacao,
                         Avaliador = tmp?.UserName,
-                        ResultadoAvaliacao = left_ta?.resultado
-                        
+                        UltimoResultadoAva = a?.resultado
                     }
                 ); 
                 if(view_item_doc != null)
