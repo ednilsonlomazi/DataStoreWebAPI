@@ -59,9 +59,11 @@ namespace DataStoreWebAPI.Controllers
                         join cliente in this._dbContext.Users // left join em avaliador
                             on doc.idCliente equals cliente.Id into tmp_cli from tmp in tmp_cli.DefaultIfEmpty()
 
-                        join ta in this._dbContext.tabAvaliacao // left join avaliacao
-                            on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
-                            new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                        from a in this._dbContext.tabAvaliacao.Where(a => a.codigoDocumento == idoc.codigoDocumento && 
+                                                                     a.codigoItemDocumento == idoc.codigoItemDocumento)
+                                                              .OrderByDescending(a => a.dtaAvaliacao)
+                                                              .Take(1)
+                                                              .DefaultIfEmpty()
                         
                     select new 
                     {
@@ -74,7 +76,7 @@ namespace DataStoreWebAPI.Controllers
                         Permissao = permissao.descricaoPermissao,
                         DtaAbertura = doc.dataSolicitacao,
                         Cliente = tmp.UserName,
-                        ResultadoAvaliacao = left_ta?.resultado
+                        ResultadoAvaliacao = a?.resultado
                         
                     }
                 ); 
@@ -99,6 +101,7 @@ namespace DataStoreWebAPI.Controllers
                 from doc in documentos
                     join cliente in this._dbContext.Users
                         on doc.idCliente equals cliente.Id
+                where doc.idAvaliador is null
 
                 select new 
                 {
@@ -147,9 +150,11 @@ namespace DataStoreWebAPI.Controllers
                             join cliente in this._dbContext.Users
                                 on doc.idCliente equals cliente.Id
 
-                            join ta in this._dbContext.tabAvaliacao // left join avaliacao
-                                on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
-                                new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                            from a in this._dbContext.tabAvaliacao.Where(a => a.codigoDocumento == idoc.codigoDocumento && 
+                                                                     a.codigoItemDocumento == idoc.codigoItemDocumento)
+                                                              .OrderByDescending(a => a.dtaAvaliacao)
+                                                              .Take(1)
+                                                              .DefaultIfEmpty()
                             
                         select new 
                         {
@@ -160,7 +165,7 @@ namespace DataStoreWebAPI.Controllers
                             Servidor = obj.serverName,
                             Permissao = permissao.descricaoPermissao,
                             Cliente = cliente.UserName,
-                            ResultadoAvaliacao = left_ta?.resultado
+                            ResultadoAvaliacao = a?.resultado
                             
                         }
                     ); 
@@ -221,13 +226,13 @@ namespace DataStoreWebAPI.Controllers
                         var NovaAvaliacao = new TabAvaliacao();
                         NovaAvaliacao.resultado = dto.resultado;
                         NovaAvaliacao.justificativa = dto.justificativa;
-                        NovaAvaliacao.codigoItemDocumento = dto.codigoItemDocumento;
-                        NovaAvaliacao.codigoDocumento = dto.codigoDocumento;
+                        //NovaAvaliacao.codigoItemDocumento = dto.codigoItemDocumento;
+                        //NovaAvaliacao.codigoDocumento = dto.codigoDocumento;
 
-                        this._dbContext.Attach(NovaAvaliacao);
-                        this._dbContext.Entry(NovaAvaliacao).State = EntityState.Added;
+                        item.avaliacao.Add(NovaAvaliacao);
 
-
+                        //this._dbContext.Attach(NovaAvaliacao);
+                        //this._dbContext.Entry(NovaAvaliacao).State = EntityState.Added;
 
                         this._dbContext.SaveChanges();
                         return Ok();
@@ -258,7 +263,7 @@ namespace DataStoreWebAPI.Controllers
                     {
                         if(item.avaliacao.Count == 0)
                         {
-                            return BadRequest("Ainda existem itens para avaliar");
+                            return BadRequest(item);
                         }                        
                     };
                     documento.codigoStatusDocumento = 4;

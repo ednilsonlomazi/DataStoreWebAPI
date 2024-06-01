@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataStoreWebAPI.Models;
 using Microsoft.AspNetCore.Authorization;
- 
+using System.Diagnostics.SymbolStore;
+
 
 namespace DataStoreWebAPI.Controllers
 {
@@ -54,16 +55,23 @@ namespace DataStoreWebAPI.Controllers
                         join avaliador in this._dbContext.Users // left join em avaliador
                             on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
 
-                        // PRECISO VOLTAR NESSE OUTER APPLY QUE NAO ESTA FUNCIONANDO
+                        join statusDoc in this._dbContext.tabStatusDocumentos
+                            on doc.codigoStatusDocumento equals statusDoc.codigoStatus
+
+
                         from a in this._dbContext.tabAvaliacao.Where(a => a.codigoDocumento == idoc.codigoDocumento && 
                                                                      a.codigoItemDocumento == idoc.codigoItemDocumento)
                                                               .OrderByDescending(a => a.dtaAvaliacao)
                                                               .Take(1)
                                                               .DefaultIfEmpty()
 
+
+                        
+
                     select new 
                     {
                         cod_doc = doc.codigoDocumento,
+                        status = statusDoc.DescricaoStatus,
                         cod_item_doc = idoc.codigoItemDocumento,
                         TipoObjeto = obj.descricaoTipoObjeto,
                         NomeObjeto = obj.ObjectName,
