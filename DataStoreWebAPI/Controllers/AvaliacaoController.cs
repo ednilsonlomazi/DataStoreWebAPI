@@ -247,8 +247,6 @@ namespace DataStoreWebAPI.Controllers
         }                
 
         // finalizar uma avaliacao
-        // VOLTAR AQUI POIS SO POSSO FINALIZAR ISSO CASO O ITEM COM RECURSO TENHA UMA AVALIACAO POSTERIOR AO RECURSO
-        // E SE CLARO RECURSO APROVADO
         [HttpPut("finalizar-avaliacao/{cod_documento}/{email_avaliador}")]
         public IActionResult PutFinalizarAvaliacao(int cod_documento, string email_avaliador)
         {
@@ -290,6 +288,7 @@ namespace DataStoreWebAPI.Controllers
                         }
                     };
                     documento.codigoStatusDocumento = 4;
+                    documento.dataFinalizacaoAvaliacao = DateTime.Now;
                     this._dbContext.Update(documento);
                     this._dbContext.SaveChanges();
                     return Ok();
@@ -332,6 +331,29 @@ namespace DataStoreWebAPI.Controllers
         }
 
 
+        // fecha o documento -- apos fechado, o documento nao aceita mais recurso de avaliacao
+        [HttpPut("fechar-documento/{cod_documento}/{email_avaliador}")]
+        public IActionResult PutFecharDocumento(int cod_documento, string email_avaliador)
+        {
+            var avaliador = this._dbContext.Users.Where(tu => tu.Email == email_avaliador).SingleOrDefault();
+            if(avaliador != null)
+            {
+                var documento = this._dbContext.tabDocumento.Where(td => td.idAvaliador == avaliador.Id
+                                                                   && td.codigoDocumento == cod_documento
+                                                                   && (DateTime.Now - td.dataFinalizacaoAvaliacao).TotalDays >= 3
+                                                                ).SingleOrDefault();
+                if(documento != null)
+                {
+                    documento.codigoStatusDocumento = 5;
+                    this._dbContext.Update(documento);
+                    this._dbContext.SaveChanges();
+                    return Ok();
+                }
+                return NotFound("Este documento eh invalido ou nao pertence a este avaliador");
+            }
+            return NotFound("Avaliador Invalido");
+
+        } 
    
 
     }

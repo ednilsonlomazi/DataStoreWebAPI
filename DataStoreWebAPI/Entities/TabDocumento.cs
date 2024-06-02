@@ -23,6 +23,7 @@ namespace DataStoreWebAPI.Entities
         public IdentityUser cliente { get; set; }    
         public IdentityUser? avaliador { get; set; } 
         public DateTime dataSolicitacao { get; set; }
+        public DateTime dataFinalizacaoAvaliacao {get; set;}
         public List<TabItemDocumento> tabItemDocumento { get; set; } // foreigh key to item de documento
 
         public TabDocumento()
