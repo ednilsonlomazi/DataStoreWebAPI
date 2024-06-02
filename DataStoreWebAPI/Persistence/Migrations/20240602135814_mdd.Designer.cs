@@ -4,6 +4,7 @@ using DataStoreWebAPI.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataStoreWebAPI.Persistence.Migrations
 {
     [DbContext(typeof(DbDataStoreContext))]
-    partial class DbDataStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20240602135814_mdd")]
+    partial class mdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,7 +71,7 @@ namespace DataStoreWebAPI.Persistence.Migrations
                     b.Property<DateTime>("dtaCriacao")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasDefaultValue(new DateTime(2024, 6, 2, 10, 58, 13, 387, DateTimeKind.Local).AddTicks(7207));
 
                     b.Property<int>("indAtivo")
                         .ValueGeneratedOnAdd()

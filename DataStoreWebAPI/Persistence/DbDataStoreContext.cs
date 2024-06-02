@@ -21,6 +21,7 @@ namespace DataStoreWebAPI.Persistence
         public DbSet<TabAvaliacao> tabAvaliacao { get; set; }       
         public DbSet<TabStatusDocumento> tabStatusDocumentos {get; set;}
         public DbSet<TabRecursoAvaliacao> tabRecursoAvaliacao {get; set;}
+        public DbSet<TabClasseObjeto> tabClasseObjeto {get; set;}        
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,20 @@ namespace DataStoreWebAPI.Persistence
             // --
             base.OnModelCreating(modelBuilder);
             // ----------------------------------------------------------------------------------------------
+            modelBuilder.Entity<TabClasseObjeto>(e => {
+
+                e.HasKey(tco => tco.IdClasse); // id universal de todos os servers, bancos e objetos
+                
+                e.HasMany(tco => tco.tabObjeto)
+                 .WithOne()
+                 .HasForeignKey(to => to.idClasseObjeto);
+
+                e.Property(tco => tco.dtaCriacao).HasDefaultValueSql("GETDATE()");
+                e.Property(tco => tco.indAtivo).HasDefaultValue(1);                
+
+            });
+
+
             modelBuilder.Entity<TabObjeto>(e => {
 
                 e.HasKey(to => to.IdObjeto); // id universal de todos os servers, bancos e objetos
@@ -109,9 +124,6 @@ namespace DataStoreWebAPI.Persistence
                 e.HasKey(ta => ta.codigoRecursoAvaliacao);
 
             });            
-
-
-
 
 
         }

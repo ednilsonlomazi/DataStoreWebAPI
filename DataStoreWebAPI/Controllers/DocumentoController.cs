@@ -41,60 +41,62 @@ namespace DataStoreWebAPI.Controllers
         [HttpGet("visualiza-itens-documento/{codigo_documento}")]
         public IActionResult GetItensDocumento(int codigo_documento)
         {
-            var itensDoc = this._dbContext.tabItemDocumento.Where(td => td.codigoDocumento == codigo_documento 
-                                                                ).ToList();
-    
-            var view_item_doc = 
-            (
-                from idoc in itensDoc
-                    
-                    join obj in this._dbContext.tabObjeto
-                        on idoc.codigoObjeto equals obj.IdObjeto
-
-                    join permissao in this._dbContext.tabPermissao
-                        on idoc.codigoPermissao equals permissao.codigoPermissao
-
-                    join doc in this._dbContext.tabDocumento 
-                        on idoc.codigoDocumento equals doc.codigoDocumento
-    
-                    join cliente in this._dbContext.Users
-                        on doc.idCliente equals cliente.Id
-
-                    join avaliador in this._dbContext.Users // left join em avaliador
-                        on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
-
-                    join ta in this._dbContext.tabAvaliacao // left join avaliacao
-                        on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
-                           new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
-                    
-                select new 
-                {
-                    cod_doc = doc.codigoDocumento,
-                    cod_item_doc = idoc.codigoItemDocumento,
-                    TipoObjeto = obj.descricaoTipoObjeto,
-                    NomeObjeto = obj.ObjectName,
-                    Database = obj.DatabaseName,
-                    Servidor = obj.serverName,
-                    Permissao = permissao.descricaoPermissao,
-                    Cliente = cliente.UserName,
-                    DtaAbertura = doc.dataSolicitacao,
-                    Avaliador = tmp?.UserName,
-                    ResultadoAvaliacao = left_ta?.resultado
-                     
-                }
-            ); 
-            
-            if(view_item_doc != null)
+            try
             {
-                return Ok(view_item_doc);
-            }
-            return NotFound();
-        }        
+                var itensDoc = this._dbContext.tabItemDocumento.Where(td => td.codigoDocumento == codigo_documento 
+                                                                    ).ToList();
         
+                var view_item_doc = 
+                (
+                    from idoc in itensDoc
+                        
+                        join obj in this._dbContext.tabObjeto
+                            on idoc.codigoObjeto equals obj.IdObjeto
 
-         
+                        join permissao in this._dbContext.tabPermissao
+                            on idoc.codigoPermissao equals permissao.codigoPermissao
 
-   
+                        join doc in this._dbContext.tabDocumento 
+                            on idoc.codigoDocumento equals doc.codigoDocumento
+        
+                        join cliente in this._dbContext.Users
+                            on doc.idCliente equals cliente.Id
 
+                        join avaliador in this._dbContext.Users // left join em avaliador
+                            on doc.idAvaliador equals avaliador.Id into tmp_ava from tmp in tmp_ava.DefaultIfEmpty()
+
+                        join ta in this._dbContext.tabAvaliacao // left join avaliacao
+                            on new {idoc.codigoDocumento, idoc.codigoItemDocumento} equals 
+                            new {ta.codigoDocumento, ta.codigoItemDocumento} into tmp_ta from left_ta in tmp_ta.DefaultIfEmpty()
+                        
+                    select new 
+                    {
+                        cod_doc = doc.codigoDocumento,
+                        cod_item_doc = idoc.codigoItemDocumento,
+                        TipoObjeto = obj.descricaoTipoObjeto,
+                        NomeObjeto = obj.ObjectName,
+                        Database = obj.DatabaseName,
+                        Servidor = obj.serverName,
+                        Permissao = permissao.descricaoPermissao,
+                        Cliente = cliente.UserName,
+                        DtaAbertura = doc.dataSolicitacao,
+                        Avaliador = tmp?.UserName,
+                        ResultadoAvaliacao = left_ta?.resultado
+                        
+                    }
+                ); 
+                
+                if(view_item_doc != null)
+                {
+                    return Ok(view_item_doc);
+                }
+                return NotFound();                
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+
+        }        
     }
 }

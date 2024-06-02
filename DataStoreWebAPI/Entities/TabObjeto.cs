@@ -11,6 +11,7 @@
         public string serverName { get; set; }
         public string? DatabaseName {get; set;}        
         public string? ObjectName {get; set;}
+        public int? idClasseObjeto {get; set;}
         public List<TabItemDocumento> tabItemDocumentos {get; set;}
 
 
