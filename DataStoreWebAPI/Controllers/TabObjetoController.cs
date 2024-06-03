@@ -53,5 +53,26 @@ namespace DataStoreWebAPI.Controllers
 
         }
 
+        [HttpGet("objetos-por-classe/{desc_classe}")]
+        public IActionResult GetObjetosPorClasse(string desc_classe)
+        {
+            var classe = this._dbContext.tabClasseObjeto.Where(tco => tco.DescricaoClasse == desc_classe).FirstOrDefault();
+            if(classe != null)
+            {
+                var objetos =
+                (
+                    from obj in this._dbContext.tabObjeto.Where(to => to.idClasseObjeto == classe.IdClasse).ToList()
+                    select new {
+                        objeto = obj.ObjectName,
+                        banco = obj.DatabaseName,
+                        servidor = obj.serverName
+                    }
+                );
+                return Ok(objetos);
+            }
+            return NotFound("Classe Invalida");
+
+        }        
+
     }
 }
