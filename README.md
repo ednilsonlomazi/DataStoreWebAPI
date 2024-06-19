@@ -21,7 +21,7 @@ O software desenvolvido neste repositório possui como finalidade o estudo das t
 * SQL Server - Banco de Dados
 
 ## Fluxo da api
-Para ter detalhes do fluxo de uso da API, criei um fluxograma que pode ser consultado no [Link](https://github.com/ednilsonlomazi/DataStoreWebApi/fluxo_de_uso.png). No entanto, forneço abaixo um resumo do fluxo: 
+Para ter detalhes do fluxo de uso da API, criei um fluxograma que pode ser consultado no [Link](https://github.com/ednilsonlomazi/DataStoreWebAPI/blob/master/fluxo_de_uso.png). No entanto, forneço abaixo um resumo do fluxo: 
 
 * Usuário cria seu cadastro na API
 * Solicita uma permissão (SELECT, UPDATE, DELETE...) á um objeto (TABELA, PROCEDURE, VIEW...)
