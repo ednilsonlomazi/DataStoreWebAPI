@@ -1,5 +1,5 @@
 ## Descrição
-Data Store Web API é uma Web API utilizada no gerenciamento e catálogo de acessos em dados dentro de um banco de dados relacional. 
+Data Store Web API é uma Web API utilizada no gerenciamento de acessos e catálogo de dados dentro de um banco de dados relacional. 
 
 ## Objetivo geral
 Fornecer uma interface entre usuário final e banco de dados.
