@@ -5,14 +5,11 @@ Data Store Web API é uma Web API utilizada no gerenciamento de acessos e catál
 Fornecer uma interface entre usuário final e banco de dados.
 
 ## Objetivos específicos
-1) Documentar:
-    Quem solicitou uma permissão à um objeto
-    Quem liberou a permisão
-    Quando foi a solicitação
-    Quando foi a liberação
-
-2) Catalogar:
-    Objetos dentro do banco, de forma a classificálos em categorias, facilitando a busca de dados.
+1) Documentar quem solicitou uma permissão à um objeto
+2) Documentar quem liberou a permisão
+3) Documentar quando foi a solicitação
+4) Documentar quando foi a liberação
+5) Catalogar objetos dentro do banco, de forma a classificálos em categorias, facilitando a busca de dados.
     
 ## Finalidade do software
 O software desenvolvido neste repositório possui como finalidade o estudo das tecnologias utilizadas.    
