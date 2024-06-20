@@ -37,6 +37,11 @@ namespace DataStoreWebAPI.Controllers
 
 
         // retorna todos os documentos de um avaliador
+        /// <summary>
+        /// Retorna todos os documentos de um avaliador
+        /// </summary>
+        /// <param name="email_avaliador"></param>
+        /// <returns></returns>
         [HttpGet("visualiza-documentos-avaliador/{email_avaliador}")]
         public IActionResult GetDocumentosAvaliador(string email_avaliador)
         {
@@ -103,6 +108,10 @@ namespace DataStoreWebAPI.Controllers
 
 
         // retorna todos documentos passiveis de avaliacao
+        /// <summary>
+        /// Retorna todos os documentos possíveis de avaliação
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("visualiza-documentos-para-avaliar")]
         public IActionResult GetDocumentosParaAvaliar()
         {
@@ -142,6 +151,11 @@ namespace DataStoreWebAPI.Controllers
   
 
         // retorna uma visao de todos os itens avaliados pelo avaliador
+        /// <summary>
+        /// retorna uma visao de todos os itens avaliados pelo avaliador
+        /// </summary>
+        /// <param name="email_avaliador"></param>
+        /// <returns></returns>
         [HttpGet("visualizar-itens-avaliados/{email_avaliador}")]
         public IActionResult GetItensAvaliadosByAvaliador(string email_avaliador)
         {
@@ -210,6 +224,12 @@ namespace DataStoreWebAPI.Controllers
         }
 
         // iniciar uma avaliacao
+        /// <summary>
+        /// Inicia uma avaliação
+        /// </summary>
+        /// <param name="cod_documento"></param>
+        /// <param name="email_avaliador"></param>
+        /// <returns></returns>
         [HttpPut("iniciar-avaliacao/{cod_documento}/{email_avaliador}")]
         public IActionResult PutIniciaAvaliacao(int cod_documento, string email_avaliador)
         {
@@ -242,6 +262,11 @@ namespace DataStoreWebAPI.Controllers
         }        
 
         // avalia um item que ja possui processo de avaliacao do documento iniciado por um avaliador
+        /// <summary>
+        /// Avalia um item
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost("avaliar-item")]
         public IActionResult PostAvaliarItem(AvaliacaoDto dto)
         {
@@ -291,6 +316,12 @@ namespace DataStoreWebAPI.Controllers
         }                
 
         // finalizar uma avaliacao
+        /// <summary>
+        /// Finaliza uma valiação
+        /// </summary>
+        /// <param name="cod_documento"></param>
+        /// <param name="email_avaliador"></param>
+        /// <returns></returns>
         [HttpPut("finalizar-avaliacao/{cod_documento}/{email_avaliador}")]
         public IActionResult PutFinalizarAvaliacao(int cod_documento, string email_avaliador)
         {
@@ -353,6 +384,12 @@ namespace DataStoreWebAPI.Controllers
            
 
         // retorna todos documentos passiveis de avaliacao
+        /// <summary>
+        /// Retorna todos os documentos possíveis de avaliação.
+        /// </summary>
+        /// <param name="resultado_analise"></param>
+        /// <param name="cod_recurso"></param>
+        /// <returns></returns>
         [HttpPut("analisar-recurso-avaliacao/{resultado_analise}")]
         public IActionResult PutAnalisarRecursoAvaliacao(bool resultado_analise, int cod_recurso)
         {
@@ -392,6 +429,12 @@ namespace DataStoreWebAPI.Controllers
 
 
         // fecha o documento -- apos fechado, o documento nao aceita mais recurso de avaliacao
+        /// <summary>
+        /// Fecha o documento
+        /// </summary>
+        /// <param name="cod_documento"></param>
+        /// <param name="email_avaliador"></param>
+        /// <returns></returns>
         [HttpPut("fechar-documento/{cod_documento}/{email_avaliador}")]
         public IActionResult PutFecharDocumento(int cod_documento, string email_avaliador)
         {

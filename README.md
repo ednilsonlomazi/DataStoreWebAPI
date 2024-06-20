@@ -16,6 +16,7 @@ O software desenvolvido neste repositório possui como finalidade o estudo das t
 
 ## Tecnologias utilizadas
 
+* Asp Net Core - API
 * Entity Framework - ORM
 * Identity Framework - Controle de Usuários
 * SQL Server - Banco de Dados
